@@ -260,7 +260,7 @@ module.exports = function() {
 
               // Stop the DHCP server...
               function restart_dhcp_service(next_step) {
-                  exec("systemctl stop create_ap", function(error, stdout, stderr) {
+                  exec("service create_ap stop", function(error, stdout, stderr) {
                       console.log(stdout);
                       if (!error) console.log("... create_ap stopped!");
                       next_step();
