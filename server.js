@@ -31,23 +31,23 @@ async.series([
         });
     },
 
-    // 2. Check if wifi is enabled / connected
-    // function test_is_wifi_enabled(next_step) {
-    //     wifi_manager.is_wifi_enabled(function(error, result_ip) {
-    //         if (result_ip) {
-    //             console.log("\nWifi is enabled, and IP " + result_ip + " assigned");
-    //             var reconfigure = config.access_point.force_reconfigure || false;
-    //             if (reconfigure) {
-    //                 console.log("\nForce reconfigure enabled - try to enable access point");
-    //             } else {
-    //                 process.exit(0);
-    //             }
-    //         } else {
-    //             console.log("\nWifi is not enabled, Enabling AP for self-configure");
-    //         }
-    //         next_step(error);
-    //     });
-    // },
+    2. Check if wifi is enabled / connected
+    function test_is_wifi_enabled(next_step) {
+        wifi_manager.is_wifi_enabled(function(error, result_ip) {
+            if (result_ip) {
+                console.log("\nWifi is enabled, and IP " + result_ip + " assigned");
+                var reconfigure = config.access_point.force_reconfigure || false;
+                if (reconfigure) {
+                    console.log("\nForce reconfigure enabled - try to enable access point");
+                } else {
+                    process.exit(0);
+                }
+            } else {
+                console.log("\nWifi is not enabled, Enabling AP for self-configure");
+            }
+            next_step(error);
+        });
+    },
 
     // 3. Turn RPI into an access point
     // function enable_rpi_ap(next_step) {
