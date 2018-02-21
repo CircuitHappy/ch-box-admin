@@ -36,6 +36,10 @@ async.series([
         wifi_manager.is_wifi_enabled(function(error, result_ip) {
             if (result_ip) {
                 console.log("\nWifi is enabled, and IP " + result_ip + " assigned");
+                exec("service create_ap stop", function(error, stdout, stderr) {
+                    console.log(stdout);
+                    if (!error) console.log("... create_ap stopped!");
+                });
                 var reconfigure = config.access_point.force_reconfigure || false;
                 if (reconfigure) {
                     console.log("\nForce reconfigure enabled - try to enable access point");
