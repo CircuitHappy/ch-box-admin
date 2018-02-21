@@ -132,7 +132,7 @@ module.exports = function() {
     _is_ap_enabled_sync = function(info) {
         // If the current IP assigned to the chosen wireless interface is
         // the one specified for the access point in the config, we are in
-        // access-point mode. 
+        // access-point mode.
         // var is_ap  =
         //     info["inet_addr"].toLowerCase() == info["ap_addr"].toLowerCase() &&
         //     info["ap_ssid"] == config.access_point.ssid;
@@ -239,7 +239,7 @@ module.exports = function() {
                         next_step();
                     });
                 },
-                
+
 
             ], callback);
         });
@@ -257,6 +257,15 @@ module.exports = function() {
             }
 
             async.series([
+
+              // Stop the DHCP server...
+              function restart_dhcp_service(next_step) {
+                  exec("systemctl stop create_ap", function(error, stdout, stderr) {
+                      console.log(stdout);
+                      if (!error) console.log("... create_ap stopped!");
+                      next_step();
+                  });
+              },
 
                 // Update /etc/network/interface with correct info...
                 function update_interfaces(next_step) {
