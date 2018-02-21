@@ -55,21 +55,25 @@ module.exports = function(wifi_manager, callback) {
             wifi_passcode:  request.body.wifi_passcode,
         };
 
+        //no error checks, just return to root page
+        //no process.exit, so this should just keep the webserver running
+        response.redirect("/");
+
         // TODO: If wifi did not come up correctly, it should fail
         // currently we ignore ifup failures.
-        wifi_manager.enable_wifi_mode(conn_info, function(error) {
-            if (error) {
-                console.log("Enable Wifi ERROR: " + error);
-                console.log("Attempt to re-enable AP mode");
-                wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
-                    console.log("... AP mode reset");
-                });
-                response.redirect("/");
-            }
-            // Success! - exit
-            console.log("Wifi Enabled! - Exiting");
-            process.exit(0);
-        });
+        // wifi_manager.enable_wifi_mode(conn_info, function(error) {
+        //     if (error) {
+        //         console.log("Enable Wifi ERROR: " + error);
+        //         console.log("Attempt to re-enable AP mode");
+        //         wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
+        //             console.log("... AP mode reset");
+        //         });
+        //         response.redirect("/");
+        //     }
+        //     // Success! - exit
+        //     console.log("Wifi Enabled! - Exiting");
+        //     process.exit(0);
+        // });
     });
 
     // Listen on our server
