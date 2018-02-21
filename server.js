@@ -45,7 +45,7 @@ async.series([
                 if (reconfigure) {
                     console.log("\nForce reconfigure enabled - try to enable access point");
                 } else {
-                    exec("sudo reboot", function(error, stdout, stderr) {
+                    exec("shutdown -r now", function(error, stdout, stderr) {
                         console.log(stdout);
                         if (!error) console.log("rebooting system!");
                     });
