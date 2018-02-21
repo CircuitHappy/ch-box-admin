@@ -31,7 +31,7 @@ async.series([
         });
     },
 
-    2. Check if wifi is enabled / connected
+    //2. Check if wifi is enabled / connected
     function test_is_wifi_enabled(next_step) {
         wifi_manager.is_wifi_enabled(function(error, result_ip) {
             if (result_ip) {
