@@ -179,63 +179,11 @@ module.exports = function() {
             // Here we need to actually follow the steps to enable the ap
             async.series([
 
-                // Enable the access point ip and netmask + static
-                // DHCP for the wlan0 interface
-                function update_interfaces(next_step) {
-                    write_template_to_file(
-                        "./assets/etc/network/interfaces.ap.template",
-                        "/etc/network/interfaces",
-                        context, next_step);
-                },
-
-                // Enable DHCP conf, set authoritative mode and subnet
-                function update_dhcpd(next_step) {
-                    // We must enable this to turn on the access point
-                    write_template_to_file(
-                        "./assets/etc/dhcp/dhcpd.conf.template",
-                        "/etc/dhcp/dhcpd.conf",
-                        context, next_step);
-                },
-
-                // Enable the interface in the dhcp server
-                function update_dhcp_interface(next_step) {
-                    write_template_to_file(
-                        "./assets/etc/default/isc-dhcp-server.template",
-                        "/etc/default/isc-dhcp-server",
-                        context, next_step);
-                },
-
-                // Enable hostapd.conf file
-                function update_hostapd_conf(next_step) {
-                    write_template_to_file(
-                        "./assets/etc/hostapd/hostapd.conf.template",
-                        "/etc/hostapd/hostapd.conf",
-                        context, next_step);
-                },
-
-                function update_hostapd_default(next_step) {
-                    write_template_to_file(
-                        "./assets/etc/default/hostapd.template",
-                        "/etc/default/hostapd",
-                        context, next_step);
-                },
-
-                function restart_dhcp_service(next_step) {
-                    exec("service isc-dhcp-server restart", function(error, stdout, stderr) {
-                        if (!error) console.log("... dhcp server restarted!");
-                        else console.log("... dhcp server failed! - " + stdout);
-                        next_step();
-                    });
-                },
-
-                function reboot_network_interfaces(next_step) {
-                    _reboot_wireless_network(config.wifi_interface, next_step);
-                },
-
-                function restart_hostapd_service(next_step) {
-                    exec("service hostapd restart", function(error, stdout, stderr) {
+                // create_ap is already running, but we need to stop wpa_supplicant
+                function stop_wpa_supplicant_service(next_step) {
+                    exec("systemctl stop wpa_supplicant.service", function(error, stdout, stderr) {
                         //console.log(stdout);
-                        if (!error) console.log("... hostapd restarted!");
+                        if (!error) console.log("... wpa_supplicant stopped!");
                         next_step();
                     });
                 },
@@ -258,7 +206,7 @@ module.exports = function() {
 
             async.series([
 
-              // Stop the DHCP server...
+              // Stop create_ap...
               function restart_dhcp_service(next_step) {
                   exec("service create_ap stop", function(error, stdout, stderr) {
                       console.log(stdout);
@@ -267,19 +215,29 @@ module.exports = function() {
                   });
               },
 
-                // Update /etc/network/interface with correct info...
+                // Add SSID to wpa_supplicant...
                 function update_interfaces(next_step) {
-                    write_template_to_file(
-                        "./assets/etc/network/interfaces.wifi.template",
-                        "/etc/network/interfaces",
-                        connection_info, next_step);
+                    exec("sudo wifi.sh add \"" + connection_info.wifi_ssid + "\" " + connection_info.wifi_passcode, function(error, stdout, stderr) {
+                        console.log(stdout);
+                        if (!error) console.log("... saved to wpa_supplicant");
+                        next_step();
+                    });
                 },
 
-                // Stop the DHCP server...
-                function restart_dhcp_service(next_step) {
-                    exec("service isc-dhcp-server stop", function(error, stdout, stderr) {
-                        //console.log(stdout);
-                        if (!error) console.log("... dhcp server stopped!");
+                // Start wpa_supplicant...
+                function start_wpa_supplicant(next_step) {
+                    exec("systemctl start wpa_supplicant.service", function(error, stdout, stderr) {
+                        console.log(stdout);
+                        if (!error) console.log("... started wpa_supplicant service");
+                        next_step();
+                    });
+                },
+
+                // Get IP from dhclient...
+                function update_dhcp(next_step) {
+                    exec("dhclient wlan0", function(error, stdout, stderr) {
+                        console.log(stdout);
+                        if (!error) console.log("... dhclient acquired IP address");
                         next_step();
                     });
                 },
