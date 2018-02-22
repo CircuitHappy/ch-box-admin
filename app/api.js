@@ -57,7 +57,7 @@ module.exports = function(wifi_manager, callback) {
 
         //no error checks, just return to root page
         //no process.exit, so this should just keep the webserver running
-        response.redirect("/");
+        response.redirect("reboot");
 
         // TODO: If wifi did not come up correctly, it should fail
         // currently we ignore ifup failures.
