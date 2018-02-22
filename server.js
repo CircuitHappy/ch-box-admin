@@ -41,10 +41,6 @@ async.series([
                 if (reconfigure) {
                     console.log("\nForce reconfigure enabled - try to enable access point");
                 } else {
-                    exec("service create_ap stop", function(error, stdout, stderr) {
-                        console.log(stdout);
-                        if (!error) console.log("... create_ap stopped!");
-                    });
                     process.exit(0);
                 }
             } else {
