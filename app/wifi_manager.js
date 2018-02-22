@@ -225,8 +225,7 @@ module.exports = function() {
 
                 // Add SSID to wpa_supplicant...
                 function update_interfaces(next_step) {
-                    console.log("connection_info: \"" + connection_info.wifi_ssid + "\" " + connection_info.wifi_passcode);
-                    exec("sudo wifi.sh add \"" + connection_info.wifi_ssid + "\" " + connection_info.wifi_passcode, function(error, stdout, stderr) {
+                    exec("wpa_passphrase \"" + connection_info.wifi_ssid + "\" \"" + connection_info.wifi_passcode + "\" > /etc/wpa_supplicant/wpa_supplicant.conf", function(error, stdout, stderr) {
                         console.log(stdout);
                         if (!error) console.log("... saved to wpa_supplicant");
                         next_step();
