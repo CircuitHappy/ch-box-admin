@@ -179,14 +179,22 @@ module.exports = function() {
             // Here we need to actually follow the steps to enable the ap
             async.series([
 
-                // create_ap is already running, but we need to stop wpa_supplicant
-                function stop_wpa_supplicant_service(next_step) {
-                    exec("systemctl stop wpa_supplicant.service", function(error, stdout, stderr) {
-                        //console.log(stdout);
-                        if (!error) console.log("... wpa_supplicant stopped!");
-                        next_step();
-                    });
-                },
+              // create_ap is already running, but we need to stop wpa_supplicant
+              function stop_wpa_supplicant_service(next_step) {
+                  exec("systemctl stop wpa_supplicant.service", function(error, stdout, stderr) {
+                      //console.log(stdout);
+                      if (!error) console.log("... wpa_supplicant stopped!");
+                      next_step();
+                  });
+              },
+              // create_ap is already running, but we need to stop wpa_supplicant
+              function start_ap_service(next_step) {
+                  exec("systemctl start create_ap", function(error, stdout, stderr) {
+                      //console.log(stdout);
+                      if (!error) console.log("... create_ap started!");
+                      next_step();
+                  });
+              },
 
 
             ], callback);
@@ -207,7 +215,7 @@ module.exports = function() {
             async.series([
 
               // Stop create_ap...
-              function restart_dhcp_service(next_step) {
+              function stop_ap_service(next_step) {
                   exec("service create_ap stop", function(error, stdout, stderr) {
                       console.log(stdout);
                       if (!error) console.log("... create_ap stopped!");
