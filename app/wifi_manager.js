@@ -219,13 +219,13 @@ module.exports = function() {
             async.series([
 
               // Stop create_ap...
-              function stop_ap_service(next_step) {
-                  exec("service create_ap stop", function(error, stdout, stderr) {
-                      console.log(stdout);
-                      if (!error) console.log("... create_ap stopped!");
-                      next_step();
-                  });
-              },
+              // function stop_ap_service(next_step) {
+              //     exec("service create_ap stop", function(error, stdout, stderr) {
+              //         console.log(stdout);
+              //         if (!error) console.log("... create_ap stopped!");
+              //         next_step();
+              //     });
+              // },
 
                 // Add SSID to wpa_supplicant...
                 function update_interfaces(next_step) {
@@ -237,23 +237,33 @@ module.exports = function() {
                 },
 
                 // Start wpa_supplicant...
-                function start_wpa_supplicant(next_step) {
-                    exec("systemctl start wpa_supplicant.service", function(error, stdout, stderr) {
+                // function start_wpa_supplicant(next_step) {
+                //     exec("systemctl start wpa_supplicant.service", function(error, stdout, stderr) {
+                //         console.log(stdout);
+                //         if (!error) console.log("... started wpa_supplicant service");
+                //         next_step();
+                //     });
+                // },
+
+                // reboot the machine...
+                function reboot(next_step) {
+                    console.log("about to reboot.");
+                    exec("shutdown -r now", function(error, stdout, stderr) {
                         console.log(stdout);
-                        if (!error) console.log("... started wpa_supplicant service");
+                        if (!error) console.log("... error rebooting");
                         next_step();
                     });
                 },
 
-                // Get IP from dhclient...
-                function update_dhcp(next_step) {
-                    console.log("about to refresh IP with dhclient.");
-                    exec("dhclient wlan0", function(error, stdout, stderr) {
-                        console.log(stdout);
-                        if (!error) console.log("... dhclient acquired IP address");
-                        next_step();
-                    });
-                },
+                // // Get IP from dhclient...
+                // function update_dhcp(next_step) {
+                //     console.log("about to refresh IP with dhclient.");
+                //     exec("dhclient wlan0", function(error, stdout, stderr) {
+                //         console.log(stdout);
+                //         if (!error) console.log("... dhclient acquired IP address");
+                //         next_step();
+                //     });
+                // },
 
                 // function reboot_network_interfaces(next_step) {
                 //     _reboot_wireless_network(config.wifi_interface, next_step);
