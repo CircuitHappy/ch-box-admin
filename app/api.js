@@ -36,11 +36,11 @@ module.exports = function(wifi_manager, callback) {
     app.use(bodyParser.json());
 
     // Setup HTTP routes for rendering views
-    app.get("/reboot", function(request, response) {
+    app.get("/", function(request, response) {
         response.render("index");
     });
 
-    app.get("/", function(request, response) {
+    app.get("/reboot.html", function(request, response) {
         response.render("reboot");
     });
 
