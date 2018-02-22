@@ -61,6 +61,7 @@ module.exports = function(wifi_manager, callback) {
 
         //no error checks, just return to root page
         //no process.exit, so this should just keep the webserver running
+        console.log("should be redirecting to reboot.html now...");
         response.redirect("/reboot.html");
 
         // TODO: If wifi did not come up correctly, it should fail
