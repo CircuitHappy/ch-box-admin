@@ -204,8 +204,12 @@ module.exports = function() {
     // Disables AP mode and reverts to wifi connection
     _enable_wifi_mode = function(connection_info, callback) {
 
+        console.log("received connection_info: \"" + connection_info.wifi_ssid + "\" \"" + connection_info.wifi_passcode + "\"");
         _is_wifi_enabled(function(error, result_ip) {
-            if (error) return callback(error);
+            if (error) {
+              console.log("error in is_wifi_enabled");
+              return callback(error);
+            }
 
             if (result_ip) {
                 console.log("\nWifi connection is enabled with IP: " + result_ip);
@@ -243,6 +247,7 @@ module.exports = function() {
 
                 // Get IP from dhclient...
                 function update_dhcp(next_step) {
+                    console.log("about to refresh IP with dhclient.");
                     exec("dhclient wlan0", function(error, stdout, stderr) {
                         console.log(stdout);
                         if (!error) console.log("... dhclient acquired IP address");
@@ -250,9 +255,9 @@ module.exports = function() {
                     });
                 },
 
-                function reboot_network_interfaces(next_step) {
-                    _reboot_wireless_network(config.wifi_interface, next_step);
-                },
+                // function reboot_network_interfaces(next_step) {
+                //     _reboot_wireless_network(config.wifi_interface, next_step);
+                // },
 
             ], callback);
         });
