@@ -237,13 +237,13 @@ module.exports = function() {
                 },
 
                 // Start wpa_supplicant...
-                // function stop_create_ap(next_step) {
-                //     exec("service create_ap stop", function(error, stdout, stderr) {
-                //         console.log(stdout);
-                //         if (!error) console.log("... stoppped create_ap service");
-                //         next_step();
-                //     });
-                // },
+                function stop_create_ap(next_step) {
+                    exec("service create_ap stop", function(error, stdout, stderr) {
+                        console.log(stdout);
+                        if (!error) console.log("... stoppped create_ap service");
+                        next_step();
+                    });
+                },
 
                 // reboot the machine...
                 function reboot(next_step) {
