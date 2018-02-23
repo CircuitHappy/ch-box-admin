@@ -237,20 +237,20 @@ module.exports = function() {
                 },
 
                 // Start wpa_supplicant...
-                // function start_wpa_supplicant(next_step) {
-                //     exec("systemctl start wpa_supplicant.service", function(error, stdout, stderr) {
-                //         console.log(stdout);
-                //         if (!error) console.log("... started wpa_supplicant service");
-                //         next_step();
-                //     });
-                // },
+                function stop_create_ap(next_step) {
+                    exec("service create_ap stop", function(error, stdout, stderr) {
+                        console.log(stdout);
+                        if (!error) console.log("... stoppped create_ap service");
+                        next_step();
+                    });
+                },
 
                 // reboot the machine...
                 function reboot(next_step) {
                     console.log("about to reboot.");
                     exec("shutdown -r now", function(error, stdout, stderr) {
                         console.log(stdout);
-                        if (!error) console.log("... error rebooting");
+                        if (!error) console.log("... rebooting");
                         next_step();
                     });
                 },

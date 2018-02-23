@@ -51,16 +51,16 @@ async.series([
     },
 
     // 3. Turn RPI into an access point
-    function enable_rpi_ap(next_step) {
-        wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
-            if(error) {
-                console.log("... AP Enable ERROR: " + error);
-            } else {
-                console.log("... AP Enable Success!");
-            }
-            next_step(error);
-        });
-    },
+    // function enable_rpi_ap(next_step) {
+    //     wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
+    //         if(error) {
+    //             console.log("... AP Enable ERROR: " + error);
+    //         } else {
+    //             console.log("... AP Enable Success!");
+    //         }
+    //         next_step(error);
+    //     });
+    // },
 
     // 4. Host HTTP server while functioning as AP, the "api.js"
     //    file contains all the needed logic to get a basic express
