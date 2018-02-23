@@ -187,15 +187,6 @@ module.exports = function() {
                       next_step();
                   });
               },
-              // create_ap is already running, but we need to stop wpa_supplicant
-              function start_ap_service(next_step) {
-                  exec("systemctl start create_ap", function(error, stdout, stderr) {
-                      //console.log(stdout);
-                      if (!error) console.log("... create_ap started!");
-                      next_step();
-                  });
-              },
-
 
             ], callback);
         });
