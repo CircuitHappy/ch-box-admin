@@ -201,7 +201,7 @@ module.exports = function() {
 
             if (result_ip) {
                 console.log("\nWifi connection is enabled with IP: " + result_ip);
-                return callback(null);
+                //return callback(null);
             }
 
             async.series([
