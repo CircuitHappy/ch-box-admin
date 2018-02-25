@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=1">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta http-equiv="refresh" content="10;URL='/'" />
+    <meta http-equiv="refresh" content="60;URL='/'" />
 
     <link rel="stylesheet" href="/external/font-awesome/css/font-awesome.min.css" >
     <link rel="stylesheet" href="/app.css">
@@ -24,6 +24,9 @@
     <div class = "page-content">
         <div class = "scan-results-container">
             <p>The WiFi credentials were saved and now your Missing Link is rebooting to connect to the new WiFi network.</p>
+            <p>Your Missing Link should be back up and running on your network in about 60 seconds.</p>
+            <i class = "fa fa-refresh"
+               ng-class = "{ 'fa-spin': scan_running }"></i>
         </div>
     </div>
 
