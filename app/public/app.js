@@ -66,6 +66,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
                 console.log(response.data);
                 if (response.data.status == "SUCCESS") {
                     console.log("AP Enabled - nothing left to do...");
+                    location.href = "reboot.html";
                 }
             });
         }

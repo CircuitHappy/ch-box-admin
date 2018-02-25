@@ -197,10 +197,7 @@ module.exports = function() {
 
         console.log("received connection_info: \"" + connection_info.wifi_ssid + "\" \"" + connection_info.wifi_passcode + "\"");
         _is_wifi_enabled(function(error, result_ip) {
-            if (error) {
-              console.log("error in is_wifi_enabled");
-              return callback(error);
-            }
+            if (error) return callback(error);
 
             if (result_ip) {
                 console.log("\nWifi connection is enabled with IP: " + result_ip);
