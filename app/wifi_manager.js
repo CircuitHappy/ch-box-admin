@@ -197,9 +197,9 @@ module.exports = function() {
               },
 
               function stop_wlan_interface(next_step) {
-                  exec("ifdown " + wlan_iface, function(error, stdout, stderr) {
+                  exec("ifdown wlan0", function(error, stdout, stderr) {
                       //console.log(stdout);
-                      if (!error) console.log("... " + wlan_iface + " ifdown!");
+                      if (!error) console.log("... wlan0 ifdown!");
                       next_step();
                   });
               },
@@ -229,9 +229,9 @@ module.exports = function() {
               },
 
               function start_wlan_interface(next_step) {
-                  exec("ifup " + wlan_iface, function(error, stdout, stderr) {
+                  exec("ifup wlan0", function(error, stdout, stderr) {
                       //console.log(stdout);
-                      if (!error) console.log("... " + wlan_iface + " ifup!");
+                      if (!error) console.log("... wlan0 ifup!");
                       next_step();
                   });
               },
