@@ -180,10 +180,66 @@ module.exports = function() {
             async.series([
 
               // create_ap is already running, but we need to stop wpa_supplicant
-              function stop_wpa_supplicant_service(next_step) {
-                  exec("systemctl stop wpa_supplicant.service", function(error, stdout, stderr) {
+              function create_uap0_interface(next_step) {
+                  exec("iw dev wlan0 interface add uap0 type __ap", function(error, stdout, stderr) {
                       //console.log(stdout);
-                      if (!error) console.log("... wpa_supplicant stopped!");
+                      if (!error) console.log("... uap0 interface created!");
+                      next_step();
+                  });
+              },
+
+              function create_nat_routing(next_step) {
+                  exec("iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE", function(error, stdout, stderr) {
+                      //console.log(stdout);
+                      if (!error) console.log("... NAT routing created!");
+                      next_step();
+                  });
+              },
+
+              function stop_wlan_interface(next_step) {
+                  exec("ifdown " + wlan_iface, function(error, stdout, stderr) {
+                      //console.log(stdout);
+                      if (!error) console.log("... " + wlan_iface + " ifdown!");
+                      next_step();
+                  });
+              },
+
+              function start_uap0_link(next_step) {
+                  exec("ip link set uap0 up", function(error, stdout, stderr) {
+                      //console.log(stdout);
+                      if (!error) console.log("... uap0 link up");
+                      next_step();
+                  });
+              },
+
+              function set_uap0_ip_address_range(next_step) {
+                  exec("ip addr add 192.168.4.1/24 broadcast 192.168.4.255 dev uap0", function(error, stdout, stderr) {
+                      //console.log(stdout);
+                      if (!error) console.log("... uap0 IP address range set");
+                      next_step();
+                  });
+              },
+
+              function start_hostapd_service(next_step) {
+                  exec("service hostapd start", function(error, stdout, stderr) {
+                      //console.log(stdout);
+                      if (!error) console.log("... hostapd started");
+                      next_step();
+                  });
+              },
+
+              function start_wlan_interface(next_step) {
+                  exec("ifup " + wlan_iface, function(error, stdout, stderr) {
+                      //console.log(stdout);
+                      if (!error) console.log("... " + wlan_iface + " ifup!");
+                      next_step();
+                  });
+              },
+
+              function start_dnsmasq_service(next_step) {
+                  exec("service dnsmasq start", function(error, stdout, stderr) {
+                      //console.log(stdout);
+                      if (!error) console.log("... dnsmasq started");
                       next_step();
                   });
               },
