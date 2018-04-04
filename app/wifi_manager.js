@@ -130,19 +130,8 @@ module.exports = function() {
 
     // Access Point related functions
     _is_ap_enabled_sync = function(info) {
-        // If the current IP assigned to the chosen wireless interface is
-        // the one specified for the access point in the config, we are in
-        // access-point mode.
-        // var is_ap  =
-        //     info["inet_addr"].toLowerCase() == info["ap_addr"].toLowerCase() &&
-        //     info["ap_ssid"] == config.access_point.ssid;
-        // NOTE: I used to detect this using the "ESSID" and "Access Point"
-        //       members from if/iwconfig.  These have been removed when the
-        //       interface is running as an access-point itself.  To cope with
-        //       this we are taking the simple way out, but at the cost that
-        //       if you join a wifi network with the same subnet, you could
-        //       collide and have the pi think that it is still in AP mode.
-        var is_ap = info["inet_addr"] == config.access_point.ip_addr;
+        // If there is no IP address assigned, we need to start the AP
+        var is_ap = info["inet_addr"] == "<unknown>";
         console.log("inet_addr is " + info["inet_addr"]);
         return (is_ap) ? info["inet_addr"].toLowerCase() : null;
     },
