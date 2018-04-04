@@ -40,8 +40,6 @@ async.series([
                 var reconfigure = config.access_point.force_reconfigure || false;
                 if (reconfigure) {
                     console.log("\nForce reconfigure enabled - try to enable access point");
-                } else {
-                    process.exit(0);
                 }
             } else {
                 console.log("\nWifi is not enabled, Enabling AP for self-configure");
