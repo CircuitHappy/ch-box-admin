@@ -50,7 +50,6 @@ async.series([
 
     // 3. Turn RPI into an access point
     function enable_rpi_ap(next_step) {
-      if (wifi_manager.get_wifi_info['inet_addr'] != "<unknown>") {
         wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
             if(error) {
                 console.log("... AP Enable ERROR: " + error);
@@ -59,9 +58,6 @@ async.series([
             }
             next_step(error);
         });
-      } else {
-        next_step(true);
-      }
     },
 
     // 4. Host HTTP server while functioning as AP, the "api.js"
