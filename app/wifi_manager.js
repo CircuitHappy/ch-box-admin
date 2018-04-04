@@ -143,6 +143,7 @@ module.exports = function() {
         //       if you join a wifi network with the same subnet, you could
         //       collide and have the pi think that it is still in AP mode.
         var is_ap = info["inet_addr"] == config.access_point.ip_addr;
+        console.log("inet_addr is " + info["inet_addr"]);
         return (is_ap) ? info["inet_addr"].toLowerCase() : null;
     },
 
