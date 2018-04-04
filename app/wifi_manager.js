@@ -196,13 +196,13 @@ module.exports = function() {
                   });
               },
 
-              function stop_wlan_interface(next_step) {
-                  exec("ifdown wlan0", function(error, stdout, stderr) {
-                      console.log(stdout);
-                      if (!error) console.log("... wlan0 ifdown!");
-                      next_step();
-                  });
-              },
+              // function stop_wlan_interface(next_step) {
+              //     exec("ifdown wlan0", function(error, stdout, stderr) {
+              //         console.log(stdout);
+              //         if (!error) console.log("... wlan0 ifdown!");
+              //         next_step();
+              //     });
+              // },
 
               function start_uap0_link(next_step) {
                   exec("ip link set uap0 up", function(error, stdout, stderr) {
@@ -228,13 +228,13 @@ module.exports = function() {
                   });
               },
 
-              function start_wlan_interface(next_step) {
-                  exec("ifup wlan0", function(error, stdout, stderr) {
-                      console.log(stdout);
-                      if (!error) console.log("... wlan0 ifup!");
-                      next_step();
-                  });
-              },
+              // function start_wlan_interface(next_step) {
+              //     exec("ifup wlan0", function(error, stdout, stderr) {
+              //         console.log(stdout);
+              //         if (!error) console.log("... wlan0 ifup!");
+              //         next_step();
+              //     });
+              // },
 
               function start_dnsmasq_service(next_step) {
                   exec("service dnsmasq start", function(error, stdout, stderr) {
@@ -276,15 +276,6 @@ module.exports = function() {
                     exec("wpa_passphrase \"" + connection_info.wifi_ssid + "\" \"" + connection_info.wifi_passcode + "\" >> /etc/wpa_supplicant/wpa_supplicant.conf", function(error, stdout, stderr) {
                         console.log(stdout);
                         if (!error) console.log("... saved to wpa_supplicant");
-                        next_step();
-                    });
-                },
-
-                // Start wpa_supplicant...
-                function stop_create_ap(next_step) {
-                    exec("service create_ap stop", function(error, stdout, stderr) {
-                        console.log(stdout);
-                        if (!error) console.log("... stoppped create_ap service");
                         next_step();
                     });
                 },
