@@ -153,7 +153,7 @@ module.exports = function() {
                 return callback(error);
             }
 
-            if (result_addr && !config.access_point.force_reconfigure) {
+            if (result_addr != "<unknown>" && !config.access_point.force_reconfigure) {
                 console.log("\nAccess point is enabled with ADDR: " + result_addr);
                 return callback(null);
             } else if (config.access_point.force_reconfigure) {
