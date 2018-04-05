@@ -43,7 +43,7 @@ module.exports = function() {
 
     // Define some globals
     var ifconfig_fields = {
-        "hw_addr":         /HWaddr\s([^\s]+)/,
+        "hw_addr":         /ether\s([^\s]+)/,
         "inet_addr":       /inet\s([^\s]+)/,
     },  iwconfig_fields = {
         "ap_addr":         /Access Point:\s([^\s]+)/,
@@ -163,9 +163,13 @@ module.exports = function() {
             }
 
             var context = config.access_point;
+            var mac_id = "xxxx";
+            if (context["hw_addr"] != "<unknown>") {
+              mac_id = context["hw_addr"].split(":")[4] + context["hw_addr"].split(":")[5];
+            }
             context["enable_ap"] = true;
             context["wifi_driver_type"] = config.wifi_driver_type;
-            context["ssid"] = "MissingLink-1234";
+            context["ssid"] = "MissingLink-" + mac_id;
 
             // Here we need to actually follow the steps to enable the ap
             async.series([
@@ -176,6 +180,15 @@ module.exports = function() {
                       "./assets/etc/hostapd/hostapd.conf.template",
                       "/etc/hostapd/hostapd.conf",
                       context, next_step);
+              },
+
+              // Set hostname to same value as SSID
+              function set_hostname(next_step) {
+                  exec("hostname " + context["ssid"], function(error, stdout, stderr) {
+                      console.log(stdout);
+                      if (!error) console.log("... hostname set to " + context["ssid"]);
+                      next_step();
+                  });
               },
 
               // create_ap is already running, but we need to stop wpa_supplicant
