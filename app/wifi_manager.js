@@ -173,7 +173,7 @@ module.exports = function() {
               function update_interfaces(next_step) {
                   config.ssid = "MissingLink-1234";
                   write_template_to_file(
-                      "./assets/etc/hostapd/hostapd.template",
+                      "./assets/etc/hostapd/hostapd.conf.template",
                       "/etc/hostapd/hostapd.conf",
                       context, next_step);
               },
