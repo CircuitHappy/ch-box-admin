@@ -174,6 +174,7 @@ module.exports = function() {
 
             var context = config.access_point;
             var mac_id = "xxxx";
+            console.log("MAC addr: " + context["hw_addr"]);
             if (context["hw_addr"] != "<unknown>") {
               mac_id = context["hw_addr"].split(":")[4] + context["hw_addr"].split(":")[5];
             }
