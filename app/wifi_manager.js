@@ -43,7 +43,6 @@ module.exports = function() {
 
     // Define some globals
     var ifconfig_fields = {
-        "hw_addr":         /ether\s([^\s]+)/,
         "inet_addr":       /inet\s([^\s]+)/,
     },  iwconfig_fields = {
         "ap_addr":         /Access Point:\s([^\s]+)/,
@@ -85,6 +84,17 @@ module.exports = function() {
             },
             function run_iwconfig(next_step) {
                 run_command_and_set_fields("iwconfig wlan0", iwconfig_fields, next_step);
+            },
+            function get_mac_address(next_step) {
+                exec('cat /sys/class/net/wlan0/address', (error, stdout, stderr) => {
+                  if (error) {
+                    console.error(`exec error: ${error}`);
+                    return;
+                  }
+                  console.log(`stdout: ${stdout}`);
+                  output["hw_addr"] = stdout;
+                });
+                next_step();
             },
         ], function(error) {
             last_wifi_info = output;
