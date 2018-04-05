@@ -48,7 +48,9 @@ module.exports = function() {
         "ap_addr":         /Access Point:\s([^\s]+)/,
         "ap_ssid":         /ESSID:\"([^\"]+)\"/,
         "unassociated":    /(unassociated)\s+Nick/,
-    },  last_wifi_info = null;
+    },  cat_fields = {
+        "hw_addr":         /^[^ ]*/,
+    }  last_wifi_info = null;
 
     // TODO: rpi-config-ap hardcoded, should derive from a constant
 
@@ -85,16 +87,8 @@ module.exports = function() {
             function run_iwconfig(next_step) {
                 run_command_and_set_fields("iwconfig wlan0", iwconfig_fields, next_step);
             },
-            function get_mac_address(next_step) {
-                exec('cat /sys/class/net/wlan0/address', (error, stdout, stderr) => {
-                  if (error) {
-                    console.error(`exec error: ${error}`);
-                    return;
-                  }
-                  console.log(`stdout: ${stdout}`);
-                  output["hw_addr"] = stdout;
-                });
-                next_step();
+            function run_iwconfig(next_step) {
+                run_command_and_set_fields("cat /sys/class/net/wlan0/address", cat_fields, next_step);
             },
         ], function(error) {
             last_wifi_info = output;
