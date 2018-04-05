@@ -169,6 +169,15 @@ module.exports = function() {
             // Here we need to actually follow the steps to enable the ap
             async.series([
 
+              // Set up hostapd conf SSID
+              function update_interfaces(next_step) {
+                  config.ssid = "MissingLink-1234";
+                  write_template_to_file(
+                      "./assets/etc/hostapd/hostapd.template",
+                      "/etc/hostapd/hostapd.conf",
+                      context, next_step);
+              },
+
               // create_ap is already running, but we need to stop wpa_supplicant
               function create_uap0_interface(next_step) {
                   exec("iw dev wlan0 interface add uap0 type __ap", function(error, stdout, stderr) {
