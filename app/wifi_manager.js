@@ -50,7 +50,7 @@ module.exports = function() {
         "unassociated":    /(unassociated)\s+Nick/,
     },  cat_fields = {
         "hw_addr":         /^[^ ]*/,
-    }  last_wifi_info = null;
+    },  last_wifi_info = null;
 
     // TODO: rpi-config-ap hardcoded, should derive from a constant
 
@@ -87,9 +87,14 @@ module.exports = function() {
             function run_iwconfig(next_step) {
                 run_command_and_set_fields("iwconfig wlan0", iwconfig_fields, next_step);
             },
-            function run_iwconfig(next_step) {
+            function run_cat_command(next_step) {
                 run_command_and_set_fields("cat /sys/class/net/wlan0/address", cat_fields, next_step);
             },
+            function set_uid_in_config(next_step) {
+                if (output["hw_addr"] != "<unknown>") {
+                  config.uid = output["hw_addr"].split(":")[4] + output["hw_addr"].split(":")[5];
+                }
+            }
         ], function(error) {
             last_wifi_info = output;
             return callback(error, output);
@@ -147,6 +152,20 @@ module.exports = function() {
         });
     },
 
+    _is_ap_enabled_sync = function(info) {
+        // If there is no IP address assigned, we need to start the AP
+        var is_ap = info["inet_addr"] == "<unknown>";
+        console.log("inet_addr is " + info["inet_addr"]);
+        return (is_ap) ? info["inet_addr"].toLowerCase() : null;
+    },
+
+    _is_ap_enabled = function(callback) {
+        _get_wifi_info(function(error, info) {
+            if (error) return callback(error, null);
+            return callback(null, _is_ap_enabled_sync(info));
+        });
+    },
+
     // Enables the accesspoint w/ bcast_ssid. This assumes that both
     // isc-dhcp-server and hostapd are installed using:
     // $sudo npm run-script provision
@@ -166,15 +185,13 @@ module.exports = function() {
                 console.log("\nAP is not enabled yet... enabling...");
             }
 
+            var info = get_wifi_info();
             var context = config.access_point;
             var mac_id = "xxxx";
             console.log("MAC addr: " + context["hw_addr"]);
-            if (context["hw_addr"] != "<unknown>") {
-              mac_id = context["hw_addr"].split(":")[4] + context["hw_addr"].split(":")[5];
-            }
             context["enable_ap"] = true;
             context["wifi_driver_type"] = config.wifi_driver_type;
-            context["ssid"] = "MissingLink-" + mac_id;
+            context["ssid"] = "MissingLink-" + config.uid;
 
             // Here we need to actually follow the steps to enable the ap
             async.series([
