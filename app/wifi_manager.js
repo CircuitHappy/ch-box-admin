@@ -48,8 +48,6 @@ module.exports = function() {
         "ap_addr":         /Access Point:\s([^\s]+)/,
         "ap_ssid":         /ESSID:\"([^\"]+)\"/,
         "unassociated":    /(unassociated)\s+Nick/,
-    },  cat_fields = {
-        "hw_addr":         /^[^ ]*/,
     },  last_wifi_info = null;
 
     // TODO: rpi-config-ap hardcoded, should derive from a constant
@@ -57,7 +55,6 @@ module.exports = function() {
     // Get generic info on an interface
     var _get_wifi_info = function(callback) {
         var output = {
-            hw_addr:      "<unknown>",
             inet_addr:    "<unknown>",
             ap_addr:      "<unknown_ap>",
             ap_ssid:      "<unknown_ssid>",
@@ -87,14 +84,6 @@ module.exports = function() {
             function run_iwconfig(next_step) {
                 run_command_and_set_fields("iwconfig wlan0", iwconfig_fields, next_step);
             },
-            function run_cat_command(next_step) {
-                run_command_and_set_fields("cat /sys/class/net/wlan0/address", cat_fields, next_step);
-            },
-            function set_uid_in_config(next_step) {
-                if (output["hw_addr"] != "<unknown>") {
-                  config.uid = output["hw_addr"].split(":")[4] + output["hw_addr"].split(":")[5];
-                }
-            }
         ], function(error) {
             last_wifi_info = output;
             return callback(error, output);
@@ -188,7 +177,6 @@ module.exports = function() {
             var info = get_wifi_info();
             var context = config.access_point;
             var mac_id = "xxxx";
-            console.log("MAC addr: " + context["hw_addr"]);
             context["enable_ap"] = true;
             context["wifi_driver_type"] = config.wifi_driver_type;
             context["ssid"] = "MissingLink-" + config.uid;
