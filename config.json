@@ -5,8 +5,7 @@
     "access_point": {
         "force_reconfigure": false,
         "wifi_interface":    "wlan0",
-        "ssid":              "MissingLink",
-        "uid":               "xxxx",
+        "ssid":              "MissingLink-xxxx",
         "passphrase":        "link1234",
         "domain":            "rpi.config",
         "ip_addr":           "192.168.44.1",

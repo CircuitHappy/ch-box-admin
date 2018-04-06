@@ -175,10 +175,8 @@ module.exports = function() {
             }
 
             var context = config.access_point;
-            var mac_id = "xxxx";
             context["enable_ap"] = true;
             context["wifi_driver_type"] = config.wifi_driver_type;
-            context["ssid"] = "MissingLink-" + config.uid;
 
             // Here we need to actually follow the steps to enable the ap
             async.series([
@@ -189,15 +187,6 @@ module.exports = function() {
                       "./assets/etc/hostapd/hostapd.conf.template",
                       "/etc/hostapd/hostapd.conf",
                       context, next_step);
-              },
-
-              // Set hostname to same value as SSID
-              function set_hostname(next_step) {
-                  exec("hostname " + context["ssid"], function(error, stdout, stderr) {
-                      console.log(stdout);
-                      if (!error) console.log("... hostname set to " + context["ssid"]);
-                      next_step();
-                  });
               },
 
               // create_ap is already running, but we need to stop wpa_supplicant
@@ -216,14 +205,6 @@ module.exports = function() {
                       next_step();
                   });
               },
-
-              // function stop_wlan_interface(next_step) {
-              //     exec("ifdown wlan0", function(error, stdout, stderr) {
-              //         console.log(stdout);
-              //         if (!error) console.log("... wlan0 ifdown!");
-              //         next_step();
-              //     });
-              // },
 
               function start_uap0_link(next_step) {
                   exec("ip link set uap0 up", function(error, stdout, stderr) {
@@ -248,14 +229,6 @@ module.exports = function() {
                       next_step();
                   });
               },
-
-              // function start_wlan_interface(next_step) {
-              //     exec("ifup wlan0", function(error, stdout, stderr) {
-              //         console.log(stdout);
-              //         if (!error) console.log("... wlan0 ifup!");
-              //         next_step();
-              //     });
-              // },
 
               function start_dnsmasq_service(next_step) {
                   exec("service dnsmasq start", function(error, stdout, stderr) {
