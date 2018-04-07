@@ -104,21 +104,23 @@ Find TimeoutStartSec and set to 10sec:
 
 2. Follow these instructions:
 
-`git clone https://github.com/sabhiram/raspberry-wifi-conf.git`
+```
+git clone https://github.com/sabhiram/raspberry-wifi-conf.git
 
-`cd raspberry-wifi-conf`
+cd raspberry-wifi-conf
 
-`npm update`
+npm update
 
-`bower install`
+bower install
 
-`sudo npm run-script provision`
+sudo npm run-script provision
 
-`sudo cp assets/init.d/raspberry-wifi-conf /etc/init.d/raspberry-wifi-conf`
+sudo cp assets/init.d/raspberry-wifi-conf /etc/init.d/raspberry-wifi-conf
 
-`sudo chmod +x /etc/init.d/raspberry-wifi-conf`
+sudo chmod +x /etc/init.d/raspberry-wifi-conf
 
-`sudo update-rc.d raspberry-wifi-conf defaults`
+sudo update-rc.d raspberry-wifi-conf defaults
+```
 
 3. Reboot and Bob’s your uncle
 
