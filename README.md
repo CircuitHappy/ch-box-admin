@@ -1,8 +1,10 @@
 # raspberry-wifi-conf
 
+## Heavily altered version for Missing Link
+
 A Node application which makes connecting your RaspberryPi to your home wifi easier
 
-## Heavily altered version for Missing Link
+***
 
 ### Set up your system* (this will have to be turned in to an automated setup script)*
 
@@ -14,7 +16,9 @@ A Node application which makes connecting your RaspberryPi to your home wifi eas
 
 `sudo systemctl disable dhcpcd`
 
-#### Install, then disable dnsmasq and hostapd (node script will start these services when needed)
+#### Install, then disable dnsmasq and hostapd
+
+_The node script will start these services when needed
 
 `sudo apt-get install dnsmasq hostapd`
 
@@ -23,7 +27,9 @@ A Node application which makes connecting your RaspberryPi to your home wifi eas
 `sudo systemctl disable hostapd`
 
 
-#### `sudo vi /etc/dnsmasq.conf`
+#### dnsmasq.conf
+
+`sudo vi /etc/dnsmasq.conf`
 
 Add this to the top of the file:
 
@@ -34,21 +40,26 @@ dhcp-range=192.168.4.20,192.168.4.100,255.255.255.0,12h
 ```
 
 
-#### `sudo vi /etc/default/hostapd`
+#### hostapd
+
+`sudo vi /etc/default/hostapd`
 
 uncomment this
 
 `DAEMON_CONF="/etc/hostapd/hostapd.conf"`
 
 
-#### `sudo vi /etc/sysctl.conf`
+#### sysctl.conf
+
+`sudo vi /etc/sysctl.conf`
 
 uncomment this
 
 `net.ipv4.ip_forward=1`
 
+#### Network Interfaces
 
-#### `sudo vi /etc/network/interfaces`
+`sudo vi /etc/network/interfaces`
 
 looks like this:
 
@@ -69,6 +80,8 @@ wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 #### Reduce network timeout
 
 `sudo vi /etc/systemd/system/network-online.target.wants/networking.service`
+
+Find TimeoutStartSec and set to 10sec:
 
 `TimeoutStartSec=10sec`
 
