@@ -14,11 +14,9 @@ Disable (or uninstall) dhcpcd service
 
 `sudo systemctl disable dhcpcd`
 
-Install, then disable dnsmasq and hostapd
+Install, then disable dnsmasq and hostapd (node script will start these services when needed)
 
 `sudo apt-get install dnsmasq hostapd`
-
-Then disable both `dnsmasq` and `hostapd` (script will start them when needed)
 
 `sudo systemctl disable dnsmasq`
 
