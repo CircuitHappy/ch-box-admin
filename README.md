@@ -49,6 +49,7 @@ uncomment this
 
 
 ####`sudo vi /etc/network/interfaces`
+
 looks like this:
 
 ```
@@ -66,6 +67,7 @@ wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 ```
 
 ####Reduce network timeout
+
 `sudo vi /etc/systemd/system/network-online.target.wants/networking.service`
 
 `TimeoutStartSec=10sec`
