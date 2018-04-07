@@ -10,11 +10,11 @@ A Node application which makes connecting your RaspberryPi to your home wifi eas
 
 ### Configure Services
 
-Disable (or uninstall) dhcpcd service
+#### Disable (or uninstall) dhcpcd service
 
 `sudo systemctl disable dhcpcd`
 
-Install, then disable dnsmasq and hostapd (node script will start these services when needed)
+#### Install, then disable dnsmasq and hostapd (node script will start these services when needed)
 
 `sudo apt-get install dnsmasq hostapd`
 
@@ -23,7 +23,7 @@ Install, then disable dnsmasq and hostapd (node script will start these services
 `sudo systemctl disable hostapd`
 
 
-`sudo vi /etc/dnsmasq.conf`
+#### `sudo vi /etc/dnsmasq.conf`
 
 Add this to the top of the file:
 
@@ -34,21 +34,21 @@ dhcp-range=192.168.4.20,192.168.4.100,255.255.255.0,12h
 ```
 
 
-`sudo vi /etc/default/hostapd`
+#### `sudo vi /etc/default/hostapd`
 
 uncomment this
 
 `DAEMON_CONF="/etc/hostapd/hostapd.conf"`
 
 
-`sudo vi /etc/sysctl.conf`
+#### `sudo vi /etc/sysctl.conf`
 
 uncomment this
 
 `net.ipv4.ip_forward=1`
 
 
-####`sudo vi /etc/network/interfaces`
+#### `sudo vi /etc/network/interfaces`
 
 looks like this:
 
@@ -66,7 +66,7 @@ iface wlan0 inet dhcp
 wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 ```
 
-####Reduce network timeout
+#### Reduce network timeout
 
 `sudo vi /etc/systemd/system/network-online.target.wants/networking.service`
 
