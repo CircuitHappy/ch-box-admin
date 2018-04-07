@@ -22,6 +22,7 @@ Install, then disable dnsmasq and hostapd (node script will start these services
 
 `sudo systemctl disable hostapd`
 
+
 `sudo vi /etc/dnsmasq.conf`
 
 Add this to the top of the file:
@@ -32,17 +33,20 @@ interface=uap0
 dhcp-range=192.168.4.20,192.168.4.100,255.255.255.0,12h
 ```
 
+
 `sudo vi /etc/default/hostapd`
 
 uncomment this
 
 `DAEMON_CONF="/etc/hostapd/hostapd.conf"`
 
+
 `sudo vi /etc/sysctl.conf`
 
 uncomment this
 
 `net.ipv4.ip_forward=1`
+
 
 `sudo vi /etc/network/interfaces`
 looks like this:
@@ -66,39 +70,6 @@ Reduce network timeout
 
 `TimeoutStartSec=10sec`
 
-#### You don’t need to do anything to this file, but there’s a comment I want to preserve:
-
-/etc/hostapd/hostapd.conf (This file is now managed by the NodeJS script)
-
-```
-interface=uap0
-
-driver=nl80211
-
-**ssid=RPiNet**
-
-hw_mode=g
-
-channel=7
-
-wmm_enabled=0
-
-macaddr_acl=0
-
-auth_algs=1
-
-ignore_broadcast_ssid=0
-
-wpa=2
-
-**wpa_passphrase=mypassphrase**
-
-wpa_key_mgmt=WPA-PSK
-
-wpa_pairwise=TKIP
-
-rsn_pairwise=CCMP
-```
 
 ### Install Software for NodeJS Server
 
