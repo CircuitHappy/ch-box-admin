@@ -26,9 +26,11 @@ Install, then disable dnsmasq and hostapd (node script will start these services
 
 Add this to the top of the file:
 
-```interface=uap0
+```
+interface=uap0
 
-dhcp-range=192.168.4.20,192.168.4.100,255.255.255.0,12h```
+dhcp-range=192.168.4.20,192.168.4.100,255.255.255.0,12h
+```
 
 `sudo vi /etc/default/hostapd`
 
@@ -45,7 +47,8 @@ uncomment this
 `sudo vi /etc/network/interfaces`
 looks like this:
 
-```auto lo
+```
+auto lo
 
 iface lo inet loopback
 
@@ -55,7 +58,8 @@ auto wlan0
 
 iface wlan0 inet dhcp
 
-wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf```
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+```
 
 Reduce network timeout
 `sudo vi /etc/systemd/system/network-online.target.wants/networking.service`
@@ -66,7 +70,8 @@ Reduce network timeout
 
 /etc/hostapd/hostapd.conf (This file is now managed by the NodeJS script)
 
-```interface=uap0
+```
+interface=uap0
 
 driver=nl80211
 
@@ -92,7 +97,8 @@ wpa_key_mgmt=WPA-PSK
 
 wpa_pairwise=TKIP
 
-rsn_pairwise=CCMP```
+rsn_pairwise=CCMP
+```
 
 ### Install Software for NodeJS Server
 
