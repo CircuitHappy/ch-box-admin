@@ -105,6 +105,7 @@ Find TimeoutStartSec and set to 10sec:
 ```
 git clone https://github.com/CircuitHappy/raspberry-wifi-conf.git
 git checkout rpi-zero
+```
 
 2. Follow these install instructions:
 
