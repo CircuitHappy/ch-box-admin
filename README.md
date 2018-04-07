@@ -48,7 +48,7 @@ uncomment this
 `net.ipv4.ip_forward=1`
 
 
-`sudo vi /etc/network/interfaces`
+####`sudo vi /etc/network/interfaces`
 looks like this:
 
 ```
@@ -65,7 +65,7 @@ iface wlan0 inet dhcp
 wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 ```
 
-Reduce network timeout
+####Reduce network timeout
 `sudo vi /etc/systemd/system/network-online.target.wants/networking.service`
 
 `TimeoutStartSec=10sec`
@@ -90,13 +90,19 @@ Reduce network timeout
 2. Follow these instructions:
 
 `git clone https://github.com/sabhiram/raspberry-wifi-conf.git`
+
 `cd raspberry-wifi-conf`
+
 `npm update`
+
 `bower install`
+
 `sudo npm run-script provision`
 
 `sudo cp assets/init.d/raspberry-wifi-conf /etc/init.d/raspberry-wifi-conf`
+
 `sudo chmod +x /etc/init.d/raspberry-wifi-conf`
+
 `sudo update-rc.d raspberry-wifi-conf defaults`
 
 3. Reboot and Bob’s your uncle
