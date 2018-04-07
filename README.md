@@ -100,7 +100,7 @@ Find TimeoutStartSec and set to 10sec:
 
 ### Install NodeJS Server
 
-1. Install "rpi-zero" branch of [CircuitHappy](https://github.com/CircuitHappy)/[raspberry-wifi-conf](https://github.com/CircuitHappy/raspberry-wifi-conf)
+1. Install "rpi-zero" branch of [raspberry-wifi-conf](https://github.com/CircuitHappy/raspberry-wifi-conf)
 
 2. Follow these instructions:
 
