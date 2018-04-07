@@ -2,7 +2,7 @@
 
 A Node application which makes connecting your RaspberryPi to your home wifi easier
 
-## Heavily altered version for our RPi Zero W
+## Heavily altered version for Missing Link
 
 ### Set up your system* (this will have to be turned in to an automated setup script)*
 
@@ -26,9 +26,9 @@ Then disable both `dnsmasq` and `hostapd` (script will start them when needed)
 
 Add this to the top of the file:
 
-`interface=uap0
+```interface=uap0
 
-dhcp-range=192.168.4.20,192.168.4.100,255.255.255.0,12h`
+dhcp-range=192.168.4.20,192.168.4.100,255.255.255.0,12h```
 
 `sudo vi /etc/default/hostapd`
 
@@ -45,7 +45,7 @@ uncomment this
 `sudo vi /etc/network/interfaces`
 looks like this:
 
-`auto lo
+```auto lo
 
 iface lo inet loopback
 
@@ -55,7 +55,7 @@ auto wlan0
 
 iface wlan0 inet dhcp
 
-wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf`
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf```
 
 Reduce network timeout
 `sudo vi /etc/systemd/system/network-online.target.wants/networking.service`
@@ -66,7 +66,7 @@ Reduce network timeout
 
 /etc/hostapd/hostapd.conf (This file is now managed by the NodeJS script)
 
-`interface=uap0
+```interface=uap0
 
 driver=nl80211
 
@@ -92,7 +92,7 @@ wpa_key_mgmt=WPA-PSK
 
 wpa_pairwise=TKIP
 
-rsn_pairwise=CCMP`
+rsn_pairwise=CCMP```
 
 ### Install Software for NodeJS Server
 
