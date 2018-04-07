@@ -14,6 +14,8 @@ Disable (or uninstall) dhcpcd service
 
 `sudo systemctl disable dhcpcd`
 
+Install, then disable dnsmasq and hostapd
+
 `sudo apt-get install dnsmasq hostapd`
 
 Then disable both `dnsmasq` and `hostapd` (script will start them when needed)
