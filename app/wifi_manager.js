@@ -1,8 +1,8 @@
-var _       = require("underscore")._,
-    async   = require("async"),
-    fs      = require("fs"),
-    exec    = require("child_process").exec,
-    config  = require("../config.json");
+var _             = require("underscore")._,
+    async         = require("async"),
+    fs            = require("fs"),
+    exec          = require("child_process").exec,
+    config        = require("../config.json");
 
 // Better template format
 _.templateSettings = {
@@ -25,6 +25,15 @@ function write_template_to_file(template_path, file_name, context, callback) {
         }
 
     ], callback);
+}
+
+// Write Wifi status to file
+function write_wifi_status(status) {
+  fs.writeFile(config.wifi_status_path, status, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+  });
 }
 
 /*****************************************************************************\
@@ -121,6 +130,7 @@ module.exports = function() {
 
     _is_wifi_enabled = function(callback) {
         _get_wifi_info(function(error, info) {
+            //write_wifi_status("TRYING_TO_CONNECT");
             if (error) return callback(error, null);
             return callback(null, _is_wifi_enabled_sync(info));
         });
@@ -251,7 +261,6 @@ module.exports = function() {
 
             if (result_ip) {
                 console.log("\nWifi connection is enabled with IP: " + result_ip);
-                //return callback(null);
             }
 
             async.series([

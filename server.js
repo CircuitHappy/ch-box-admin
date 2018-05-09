@@ -1,6 +1,7 @@
 var async               = require("async"),
     wifi_manager        = require("./app/wifi_manager")(),
     dependency_manager  = require("./app/dependency_manager")(),
+    fs                  = require("fs"),
     config              = require("./config.json");
     exec                = require("child_process").exec;
 
@@ -37,6 +38,7 @@ async.series([
         wifi_manager.is_wifi_enabled(function(error, result_ip) {
             if (result_ip) {
                 console.log("\nWifi is enabled, and IP " + result_ip + " assigned");
+                write_wifi_status("WIFI_CONNECTED");
                 var reconfigure = config.access_point.force_reconfigure || false;
                 if (reconfigure) {
                     console.log("\nForce reconfigure enabled - try to enable access point");
@@ -53,8 +55,10 @@ async.series([
         wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
             if(error) {
                 console.log("... AP Enable ERROR: " + error);
+                write_wifi_status("NO_WIFI_FOUND");
             } else {
                 console.log("... AP Enable Success!");
+                write_wifi_status("AP_MODE");
             }
             next_step(error);
         });
@@ -74,3 +78,12 @@ async.series([
         console.log("ERROR: " + error);
     }
 });
+
+// Write Wifi status to file
+function write_wifi_status(status) {
+  fs.writeFile(config.wifi_status_path, status, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+  });
+}
