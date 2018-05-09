@@ -248,6 +248,11 @@ module.exports = function() {
                   });
               },
 
+              function write_ap_mode_wifi_status(next_step) {
+                write_wifi_status("AP_MODE");
+                next_step();
+              },
+
             ], callback);
         });
     },

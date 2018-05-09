@@ -55,10 +55,8 @@ async.series([
         wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
             if(error) {
                 console.log("... AP Enable ERROR: " + error);
-                write_wifi_status("NO_WIFI_FOUND");
             } else {
                 console.log("... AP Enable Success!");
-                write_wifi_status("AP_MODE");
             }
             next_step(error);
         });
