@@ -79,6 +79,11 @@ async.series([
 
 // Write Wifi status to file
 function write_wifi_status(status) {
+  fs.truncate(config.wifi_status_path, 0, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+  });
   fs.writeFile(config.wifi_status_path, status, function(err) {
     if(err) {
         return console.log(err);
