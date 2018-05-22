@@ -81,9 +81,9 @@ wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 
 `sudo vi /etc/systemd/system/network-online.target.wants/networking.service`
 
-Find TimeoutStartSec and set to 10sec:
+Find TimeoutStartSec and set to 1sec:
 
-`TimeoutStartSec=10sec`
+`TimeoutStartSec=1sec`
 
 
 ### Install Software for NodeJS Server
