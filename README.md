@@ -20,7 +20,7 @@ A Node application which makes connecting your RaspberryPi to your home wifi eas
 
 _The node script will start these services when needed
 
-`sudo apt-get install dnsmasq hostapd`
+`sudo apt-get install dnsmasq hostapd iw`
 
 `sudo systemctl disable dnsmasq`
 
