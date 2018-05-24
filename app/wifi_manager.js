@@ -1,8 +1,8 @@
-var _       = require("underscore")._,
-    async   = require("async"),
-    fs      = require("fs"),
-    exec    = require("child_process").exec,
-    config  = require("../config.json");
+var _             = require("underscore")._,
+    async         = require("async"),
+    fs            = require("fs"),
+    exec          = require("child_process").exec,
+    config        = require("../config.json");
 
 // Better template format
 _.templateSettings = {
@@ -27,6 +27,20 @@ function write_template_to_file(template_path, file_name, context, callback) {
     ], callback);
 }
 
+// Clear and then Write Wifi status to file
+function write_wifi_status(status) {
+  fs.truncate(config.wifi_status_path, 0, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+  });
+  fs.writeFile(config.wifi_status_path, status, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+  });
+}
+
 /*****************************************************************************\
     Return a set of functions which we can use to manage and check our wifi
     connection information
@@ -43,8 +57,7 @@ module.exports = function() {
 
     // Define some globals
     var ifconfig_fields = {
-        "hw_addr":         /HWaddr\s([^\s]+)/,
-        "inet_addr":       /inet addr:([^\s]+)/,
+        "inet_addr":       /inet\s([^\s]+)/,
     },  iwconfig_fields = {
         "ap_addr":         /Access Point:\s([^\s]+)/,
         "ap_ssid":         /ESSID:\"([^\"]+)\"/,
@@ -56,7 +69,6 @@ module.exports = function() {
     // Get generic info on an interface
     var _get_wifi_info = function(callback) {
         var output = {
-            hw_addr:      "<unknown>",
             inet_addr:    "<unknown>",
             ap_addr:      "<unknown_ap>",
             ap_ssid:      "<unknown_ssid>",
@@ -123,6 +135,7 @@ module.exports = function() {
 
     _is_wifi_enabled = function(callback) {
         _get_wifi_info(function(error, info) {
+            write_wifi_status("TRYING_TO_CONNECT");
             if (error) return callback(error, null);
             return callback(null, _is_wifi_enabled_sync(info));
         });
@@ -130,19 +143,23 @@ module.exports = function() {
 
     // Access Point related functions
     _is_ap_enabled_sync = function(info) {
-        // If the current IP assigned to the chosen wireless interface is
-        // the one specified for the access point in the config, we are in
-        // access-point mode. 
-        // var is_ap  =
-        //     info["inet_addr"].toLowerCase() == info["ap_addr"].toLowerCase() &&
-        //     info["ap_ssid"] == config.access_point.ssid;
-        // NOTE: I used to detect this using the "ESSID" and "Access Point"
-        //       members from if/iwconfig.  These have been removed when the
-        //       interface is running as an access-point itself.  To cope with
-        //       this we are taking the simple way out, but at the cost that
-        //       if you join a wifi network with the same subnet, you could
-        //       collide and have the pi think that it is still in AP mode.
-        var is_ap = info["inet_addr"] == config.access_point.ip_addr;
+        // If there is no IP address assigned, we need to start the AP
+        var is_ap = info["inet_addr"] == "<unknown>";
+        console.log("inet_addr is " + info["inet_addr"]);
+        return (is_ap) ? info["inet_addr"].toLowerCase() : null;
+    },
+
+    _is_ap_enabled = function(callback) {
+        _get_wifi_info(function(error, info) {
+            if (error) return callback(error, null);
+            return callback(null, _is_ap_enabled_sync(info));
+        });
+    },
+
+    _is_ap_enabled_sync = function(info) {
+        // If there is no IP address assigned, we need to start the AP
+        var is_ap = info["inet_addr"] == "<unknown>";
+        console.log("inet_addr is " + info["inet_addr"]);
         return (is_ap) ? info["inet_addr"].toLowerCase() : null;
     },
 
@@ -163,7 +180,7 @@ module.exports = function() {
                 return callback(error);
             }
 
-            if (result_addr && !config.access_point.force_reconfigure) {
+            if (result_addr != "<unknown>" && !config.access_point.force_reconfigure) {
                 console.log("\nAccess point is enabled with ADDR: " + result_addr);
                 return callback(null);
             } else if (config.access_point.force_reconfigure) {
@@ -179,67 +196,67 @@ module.exports = function() {
             // Here we need to actually follow the steps to enable the ap
             async.series([
 
-                // Enable the access point ip and netmask + static
-                // DHCP for the wlan0 interface
-                function update_interfaces(next_step) {
-                    write_template_to_file(
-                        "./assets/etc/network/interfaces.ap.template",
-                        "/etc/network/interfaces",
-                        context, next_step);
-                },
+              // Set up hostapd conf SSID
+              function update_interfaces(next_step) {
+                  write_template_to_file(
+                      "./assets/etc/hostapd/hostapd.conf.template",
+                      "/etc/hostapd/hostapd.conf",
+                      context, next_step);
+              },
 
-                // Enable DHCP conf, set authoritative mode and subnet
-                function update_dhcpd(next_step) {
-                    // We must enable this to turn on the access point
-                    write_template_to_file(
-                        "./assets/etc/dhcp/dhcpd.conf.template",
-                        "/etc/dhcp/dhcpd.conf",
-                        context, next_step);
-                },
+              // create_ap is already running, but we need to stop wpa_supplicant
+              function create_uap0_interface(next_step) {
+                  exec("iw dev wlan0 interface add uap0 type __ap", function(error, stdout, stderr) {
+                      console.log(stdout);
+                      if (!error) console.log("... uap0 interface created!");
+                      next_step();
+                  });
+              },
 
-                // Enable the interface in the dhcp server
-                function update_dhcp_interface(next_step) {
-                    write_template_to_file(
-                        "./assets/etc/default/isc-dhcp-server.template",
-                        "/etc/default/isc-dhcp-server",
-                        context, next_step);
-                },
+              function create_nat_routing(next_step) {
+                  exec("iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE", function(error, stdout, stderr) {
+                      console.log(stdout);
+                      if (!error) console.log("... NAT routing created!");
+                      next_step();
+                  });
+              },
 
-                // Enable hostapd.conf file
-                function update_hostapd_conf(next_step) {
-                    write_template_to_file(
-                        "./assets/etc/hostapd/hostapd.conf.template",
-                        "/etc/hostapd/hostapd.conf",
-                        context, next_step);
-                },
+              function start_uap0_link(next_step) {
+                  exec("ip link set uap0 up", function(error, stdout, stderr) {
+                      console.log(stdout);
+                      if (!error) console.log("... uap0 link up");
+                      next_step();
+                  });
+              },
 
-                function update_hostapd_default(next_step) {
-                    write_template_to_file(
-                        "./assets/etc/default/hostapd.template",
-                        "/etc/default/hostapd",
-                        context, next_step);
-                },
+              function set_uap0_ip_address_range(next_step) {
+                  exec("ip addr add 192.168.4.1/24 broadcast 192.168.4.255 dev uap0", function(error, stdout, stderr) {
+                      console.log(stdout);
+                      if (!error) console.log("... uap0 IP address range set");
+                      next_step();
+                  });
+              },
 
-                function restart_dhcp_service(next_step) {
-                    exec("service isc-dhcp-server restart", function(error, stdout, stderr) {
-                        if (!error) console.log("... dhcp server restarted!");
-                        else console.log("... dhcp server failed! - " + stdout);
-                        next_step();
-                    });
-                },
+              function start_hostapd_service(next_step) {
+                  exec("service hostapd start", function(error, stdout, stderr) {
+                      console.log(stdout);
+                      if (!error) console.log("... hostapd started");
+                      next_step();
+                  });
+              },
 
-                function reboot_network_interfaces(next_step) {
-                    _reboot_wireless_network(config.wifi_interface, next_step);
-                },
+              function start_dnsmasq_service(next_step) {
+                  exec("service dnsmasq start", function(error, stdout, stderr) {
+                      console.log(stdout);
+                      if (!error) console.log("... dnsmasq started");
+                      next_step();
+                  });
+              },
 
-                function restart_hostapd_service(next_step) {
-                    exec("service hostapd restart", function(error, stdout, stderr) {
-                        //console.log(stdout);
-                        if (!error) console.log("... hostapd restarted!");
-                        next_step();
-                    });
-                },
-                
+              function write_ap_mode_wifi_status(next_step) {
+                write_wifi_status("AP_MODE");
+                next_step();
+              },
 
             ], callback);
         });
@@ -248,36 +265,57 @@ module.exports = function() {
     // Disables AP mode and reverts to wifi connection
     _enable_wifi_mode = function(connection_info, callback) {
 
+        console.log("received connection_info: \"" + connection_info.wifi_ssid + "\" \"" + connection_info.wifi_passcode + "\"");
         _is_wifi_enabled(function(error, result_ip) {
             if (error) return callback(error);
 
             if (result_ip) {
                 console.log("\nWifi connection is enabled with IP: " + result_ip);
-                return callback(null);
             }
 
             async.series([
 
-                // Update /etc/network/interface with correct info...
-                function update_interfaces(next_step) {
-                    write_template_to_file(
-                        "./assets/etc/network/interfaces.wifi.template",
-                        "/etc/network/interfaces",
-                        connection_info, next_step);
-                },
+              // Stop create_ap...
+              // function stop_ap_service(next_step) {
+              //     exec("service create_ap stop", function(error, stdout, stderr) {
+              //         console.log(stdout);
+              //         if (!error) console.log("... create_ap stopped!");
+              //         next_step();
+              //     });
+              // },
 
-                // Stop the DHCP server...
-                function restart_dhcp_service(next_step) {
-                    exec("service isc-dhcp-server stop", function(error, stdout, stderr) {
-                        //console.log(stdout);
-                        if (!error) console.log("... dhcp server stopped!");
+                // Add SSID to wpa_supplicant...
+                function update_interfaces(next_step) {
+                    exec("wpa_passphrase \"" + connection_info.wifi_ssid + "\" \"" + connection_info.wifi_passcode + "\" >> /etc/wpa_supplicant/wpa_supplicant.conf", function(error, stdout, stderr) {
+                        console.log(stdout);
+                        if (!error) console.log("... saved to wpa_supplicant");
                         next_step();
                     });
                 },
 
-                function reboot_network_interfaces(next_step) {
-                    _reboot_wireless_network(config.wifi_interface, next_step);
+                // reboot the machine...
+                function reboot(next_step) {
+                    console.log("about to reboot.");
+                    exec("shutdown -r now", function(error, stdout, stderr) {
+                        console.log(stdout);
+                        if (!error) console.log("... rebooting");
+                        next_step();
+                    });
                 },
+
+                // // Get IP from dhclient...
+                // function update_dhcp(next_step) {
+                //     console.log("about to refresh IP with dhclient.");
+                //     exec("dhclient wlan0", function(error, stdout, stderr) {
+                //         console.log(stdout);
+                //         if (!error) console.log("... dhclient acquired IP address");
+                //         next_step();
+                //     });
+                // },
+
+                // function reboot_network_interfaces(next_step) {
+                //     _reboot_wireless_network(config.wifi_interface, next_step);
+                // },
 
             ], callback);
         });

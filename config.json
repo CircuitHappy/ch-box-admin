@@ -1,12 +1,13 @@
 {
     "wifi_interface": "wlan0",
     "wifi_driver_type": "nl80211",
+    "wifi_status_path": "/tmp/WifiStatus",
 
     "access_point": {
-        "force_reconfigure": true,
+        "force_reconfigure": false,
         "wifi_interface":    "wlan0",
-        "ssid":              "rpi-config-ap",
-        "passphrase":        "zzzzzzzz",
+        "ssid":              "MissingLink-xxxx",
+        "passphrase":        "link1234",
         "domain":            "rpi.config",
         "ip_addr":           "192.168.44.1",
         "netmask":           "255.255.255.0",

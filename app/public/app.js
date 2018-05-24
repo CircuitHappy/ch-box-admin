@@ -61,11 +61,12 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
                 wifi_ssid:      $scope.selected_cell["ssid"],
                 wifi_passcode:  $scope.network_passcode,
             };
-
+            location.href = "reboot.html";
             PiManager.enable_wifi(wifi_info).then(function(response) {
                 console.log(response.data);
                 if (response.data.status == "SUCCESS") {
                     console.log("AP Enabled - nothing left to do...");
+                    //redirect would be good here on success, but success isn't being echo'd back.
                 }
             });
         }

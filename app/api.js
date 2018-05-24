@@ -40,6 +40,10 @@ module.exports = function(wifi_manager, callback) {
         response.render("index");
     });
 
+    app.get("/reboot.html", function(request, response) {
+        response.render("reboot");
+    });
+
     // Setup HTTP routes for various APIs we wish to implement
     // the responses to these are typically JSON
     app.get("/api/rescan_wifi", function(request, response) {
@@ -55,6 +59,11 @@ module.exports = function(wifi_manager, callback) {
             wifi_passcode:  request.body.wifi_passcode,
         };
 
+        //no error checks, just return to root page
+        //no process.exit, so this should just keep the webserver running
+        console.log("should be redirecting to reboot.html now...");
+        response.redirect("/reboot.html");
+
         // TODO: If wifi did not come up correctly, it should fail
         // currently we ignore ifup failures.
         wifi_manager.enable_wifi_mode(conn_info, function(error) {
@@ -63,6 +72,7 @@ module.exports = function(wifi_manager, callback) {
                 console.log("Attempt to re-enable AP mode");
                 wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
                     console.log("... AP mode reset");
+                    response.redirect("/reboot.html");
                 });
                 response.redirect("/");
             }

@@ -2,7 +2,7 @@
 <html lang="en" ng-app="RpiWifiConfig">
 
 <head>
-    <title>Rpi Wifi Config</title>
+    <title>Missing Link Wifi Config</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=1">
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -17,7 +17,7 @@
       ng-keyup      = "$event.keyCode == 27 ? change_selection(null) : ''">
 
     <div class = "page-header">
-        <i class = "fa fa-wifi"></i> Choose a Wifi Ap
+        <i class = "fa fa-wifi"></i> Choose a Wifi Network
         <a href = "#" ng-click = "rescan()" ng-class = "{ 'active': scan_running }">
             <i class = "fa fa-refresh"
                ng-class = "{ 'fa-spin': scan_running }"></i>
@@ -53,5 +53,3 @@
 </body>
 
 </html>
-
-

@@ -16,7 +16,7 @@ case "$1" in
   start)
     echo "Starting raspberry-wifi-conf service"
     cd /home/pi/raspberry-wifi-conf
-    sudo /usr/bin/node server.js &
+    sudo /usr/bin/node server.js < /dev/null &
     echo $! > node.pid
     ;;
   stop)
