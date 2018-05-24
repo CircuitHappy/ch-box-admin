@@ -258,10 +258,16 @@ module.exports = function() {
                     });
                 },
 
+                function write_boot_status_and_wait(next_step) {
+                    setTimeout( function () {
+                      _write_wifi_status("REBOOT");
+                    }, 2000);
+                    next_step();
+                },
+
                 // reboot the machine...
                 function reboot(next_step) {
                     console.log("about to reboot.");
-                    _write_wifi_status("REBOOT");
                     exec("shutdown -r now", function(error, stdout, stderr) {
                         console.log(stdout);
                         if (!error) console.log("... rebooting");
