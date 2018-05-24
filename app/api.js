@@ -63,6 +63,15 @@ module.exports = function(wifi_manager, callback) {
         //no process.exit, so this should just keep the webserver running
         console.log("should be redirecting to reboot.html now...");
         response.redirect("/reboot.html");
+
+        // TODO: Validate SSID/password before rebooting
+        // Currently blindly write the SSID/Passphrase to WPA_Supplica
+        wifi_manager.enable_wifi_mode(conn_info, function(error) {
+            if (error) {
+                console.log("Enable Wifi ERROR: " + error);
+                console.log("Error logged here but doing nothing about it for now.");
+            }
+        });
     });
 
     // Listen on our server
