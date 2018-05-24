@@ -27,20 +27,6 @@ function write_template_to_file(template_path, file_name, context, callback) {
     ], callback);
 }
 
-// Clear and then Write Wifi status to file
-function write_wifi_status(status) {
-  fs.truncate(config.wifi_status_path, 0, function(err) {
-    if(err) {
-        return console.log(err);
-    }
-  });
-  fs.writeFile(config.wifi_status_path, status, function(err) {
-    if(err) {
-        return console.log(err);
-    }
-  });
-}
-
 /*****************************************************************************\
     Return a set of functions which we can use to manage and check our wifi
     connection information
@@ -63,8 +49,6 @@ module.exports = function() {
         "ap_ssid":         /ESSID:\"([^\"]+)\"/,
         "unassociated":    /(unassociated)\s+Nick/,
     },  last_wifi_info = null;
-
-    // TODO: rpi-config-ap hardcoded, should derive from a constant
 
     // Get generic info on an interface
     var _get_wifi_info = function(callback) {
@@ -104,22 +88,21 @@ module.exports = function() {
         });
     },
 
-    _reboot_wireless_network = function(wlan_iface, callback) {
-        async.series([
-            function down(next_step) {
-                exec("sudo ifdown " + wlan_iface, function(error, stdout, stderr) {
-                    if (!error) console.log("ifdown " + wlan_iface + " successful...");
-                    next_step();
-                });
-            },
-            function up(next_step) {
-                exec("sudo ifup " + wlan_iface, function(error, stdout, stderr) {
-                    if (!error) console.log("ifup " + wlan_iface + " successful...");
-                    next_step();
-                });
-            },
-        ], callback);
-    },
+    // Write WiFi Conf status to files
+    _write_wifi_status = function(status) {
+        //clear wifi status file
+        fs.truncate(config.wifi_status_path, 0, function(err) {
+          if(err) {
+            return console.log(err);
+          }
+        });
+        //then write the new status to file
+        fs.writeFile(config.wifi_status_path, status, function(err) {
+          if(err) {
+            return console.log(err);
+          }
+        });
+    }
 
     // Wifi related functions
     _is_wifi_enabled_sync = function(info) {
@@ -135,7 +118,6 @@ module.exports = function() {
 
     _is_wifi_enabled = function(callback) {
         _get_wifi_info(function(error, info) {
-            write_wifi_status("TRYING_TO_CONNECT");
             if (error) return callback(error, null);
             return callback(null, _is_wifi_enabled_sync(info));
         });
@@ -180,11 +162,9 @@ module.exports = function() {
                 return callback(error);
             }
 
-            if (result_addr != "<unknown>" && !config.access_point.force_reconfigure) {
+            if (result_addr != "<unknown>") {
                 console.log("\nAccess point is enabled with ADDR: " + result_addr);
                 return callback(null);
-            } else if (config.access_point.force_reconfigure) {
-                console.log("\nForce reconfigure enabled - reset AP");
             } else {
                 console.log("\nAP is not enabled yet... enabling...");
             }
@@ -253,11 +233,6 @@ module.exports = function() {
                   });
               },
 
-              function write_ap_mode_wifi_status(next_step) {
-                write_wifi_status("AP_MODE");
-                next_step();
-              },
-
             ], callback);
         });
     },
@@ -274,16 +249,6 @@ module.exports = function() {
             }
 
             async.series([
-
-              // Stop create_ap...
-              // function stop_ap_service(next_step) {
-              //     exec("service create_ap stop", function(error, stdout, stderr) {
-              //         console.log(stdout);
-              //         if (!error) console.log("... create_ap stopped!");
-              //         next_step();
-              //     });
-              // },
-
                 // Add SSID to wpa_supplicant...
                 function update_interfaces(next_step) {
                     exec("wpa_passphrase \"" + connection_info.wifi_ssid + "\" \"" + connection_info.wifi_passcode + "\" >> /etc/wpa_supplicant/wpa_supplicant.conf", function(error, stdout, stderr) {
@@ -296,26 +261,13 @@ module.exports = function() {
                 // reboot the machine...
                 function reboot(next_step) {
                     console.log("about to reboot.");
+                    _write_wifi_status("REBOOT");
                     exec("shutdown -r now", function(error, stdout, stderr) {
                         console.log(stdout);
                         if (!error) console.log("... rebooting");
                         next_step();
                     });
                 },
-
-                // // Get IP from dhclient...
-                // function update_dhcp(next_step) {
-                //     console.log("about to refresh IP with dhclient.");
-                //     exec("dhclient wlan0", function(error, stdout, stderr) {
-                //         console.log(stdout);
-                //         if (!error) console.log("... dhclient acquired IP address");
-                //         next_step();
-                //     });
-                // },
-
-                // function reboot_network_interfaces(next_step) {
-                //     _reboot_wireless_network(config.wifi_interface, next_step);
-                // },
 
             ], callback);
         });
@@ -324,7 +276,6 @@ module.exports = function() {
 
     return {
         get_wifi_info:           _get_wifi_info,
-        reboot_wireless_network: _reboot_wireless_network,
 
         is_wifi_enabled:         _is_wifi_enabled,
         is_wifi_enabled_sync:    _is_wifi_enabled_sync,
@@ -334,5 +285,7 @@ module.exports = function() {
 
         enable_ap_mode:          _enable_ap_mode,
         enable_wifi_mode:        _enable_wifi_mode,
+
+        write_wifi_status:       _write_wifi_status
     };
 }

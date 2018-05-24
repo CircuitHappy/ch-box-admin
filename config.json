@@ -4,7 +4,6 @@
     "wifi_status_path": "/tmp/WifiStatus",
 
     "access_point": {
-        "force_reconfigure": false,
         "wifi_interface":    "wlan0",
         "ssid":              "MissingLink-xxxx",
         "passphrase":        "link1234",
