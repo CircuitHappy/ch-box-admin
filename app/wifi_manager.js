@@ -244,10 +244,6 @@ module.exports = function() {
         _is_wifi_enabled(function(error, result_ip) {
             if (error) return callback(error);
 
-            if (result_ip) {
-                console.log("\nWifi connection is enabled with IP: " + result_ip);
-            }
-
             async.series([
                 // Add SSID to wpa_supplicant...
                 function update_interfaces(next_step) {
