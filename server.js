@@ -25,7 +25,7 @@ async.series([
     // 1. Check if we have the required dependencies installed
     function test_deps(next_step) {
         dependency_manager.check_deps({
-            "binaries": ["dhcpd", "hostapd", "iw"]
+            "binaries": ["hostapd", "iw"]
             //"files":    ["/etc/init.d/isc-dhcp-server"]
         }, function(error) {
             if (error) console.log(" * Dependency error, did you run `sudo npm run-script provision`?");
