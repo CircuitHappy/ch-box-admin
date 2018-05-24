@@ -40,7 +40,6 @@ async.series([
             if (result_ip) {
                 console.log("\nWifi is enabled, and IP " + result_ip + " assigned");
                 wifi_manager.write_wifi_status("WIFI_CONNECTED");
-                var reconfigure = config.access_point.force_reconfigure || false;
             } else {
                 console.log("\nWifi is not enabled, Enabling AP for self-configure");
                 wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
