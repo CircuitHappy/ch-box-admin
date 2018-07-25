@@ -1,5 +1,6 @@
 var async               = require("async"),
     wifi_manager        = require("./app/wifi_manager")(),
+    software_updater    = require("./app/software_updater")(),
     dependency_manager  = require("./app/dependency_manager")(),
     fs                  = require("fs"),
     config              = require("./config.json");

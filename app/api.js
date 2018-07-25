@@ -48,6 +48,10 @@ module.exports = function(wifi_manager, callback) {
         response.render("add_wifi");
     });
 
+    app.get("/update_software.html", function(request, response) {
+        response.render("update_software");
+    });
+
     // Setup HTTP routes for various APIs we wish to implement
     // the responses to these are typically JSON
     app.get("/api/rescan_wifi", function(request, response) {
