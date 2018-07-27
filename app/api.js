@@ -40,17 +40,28 @@ module.exports = function(wifi_manager, callback) {
         response.render("index");
     });
 
-    app.get("/reboot.html", function(request, response) {
-        response.render("reboot");
-    });
-
     app.get("/add_wifi.html", function(request, response) {
         response.render("add_wifi");
+    });
+
+    app.get("/reboot.html", function(request, response) {
+        response.render("reboot");
     });
 
     app.get("/update_software.html", function(request, response) {
         response.render("update_software");
     });
+
+    app.get("/api/update_software"), function(request, response) {
+      console.log("Server got /api/update_software");
+      software_updater.update_software(function(error) {
+        if (error) {
+          console.log("Software update error: " + error);
+          response.redirect("/");
+        }
+        response.redirect("/reboot.html");
+      });
+    }
 
     // Setup HTTP routes for various APIs we wish to implement
     // the responses to these are typically JSON
@@ -72,13 +83,21 @@ module.exports = function(wifi_manager, callback) {
         console.log("should be redirecting to reboot.html now...");
         response.redirect("/reboot.html");
 
-        // TODO: Validate SSID/password before rebooting
-        // Currently blindly write the SSID/Passphrase to WPA_Supplica
+        // TODO: If wifi did not come up correctly, it should fail
+        // currently we ignore ifup failures.
         wifi_manager.enable_wifi_mode(conn_info, function(error) {
             if (error) {
                 console.log("Enable Wifi ERROR: " + error);
-                console.log("Error logged here but doing nothing about it for now.");
+                console.log("Attempt to re-enable AP mode");
+                wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
+                    console.log("... AP mode reset");
+                    response.redirect("/reboot.html");
+                });
+                response.redirect("/");
             }
+            // Success! - exit
+            console.log("Wifi Enabled! - Exiting");
+            process.exit(0);
         });
     });
 

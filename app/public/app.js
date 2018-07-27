@@ -71,6 +71,15 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             });
         }
 
+        $scope.update_software = function() {
+          PiManager.update_software().then(function(response) {
+            console.log(response.data);
+            if (response.data.status == "SUCCESS") {
+              console.log("Software Updated. Time to reboot!");
+            }
+          })
+        }
+
         // Defer load the scanned results from the rpi
         $scope.rescan();
     }]
@@ -88,6 +97,9 @@ app.service("PiManager", ["$http",
             },
             enable_wifi: function(wifi_info) {
                 return $http.post("/api/enable_wifi", wifi_info);
+            },
+            update_software: function() {
+                return $.http.post("/api/update_software");
             }
         };
     }]
