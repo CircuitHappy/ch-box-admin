@@ -44,6 +44,14 @@ module.exports = function(wifi_manager, callback) {
         response.render("reboot");
     });
 
+    app.get("/add_wifi.html", function(request, response) {
+        response.render("add_wifi");
+    });
+
+    app.get("/update_software.html", function(request, response) {
+        response.render("update_software");
+    });
+
     // Setup HTTP routes for various APIs we wish to implement
     // the responses to these are typically JSON
     app.get("/api/rescan_wifi", function(request, response) {
@@ -64,21 +72,13 @@ module.exports = function(wifi_manager, callback) {
         console.log("should be redirecting to reboot.html now...");
         response.redirect("/reboot.html");
 
-        // TODO: If wifi did not come up correctly, it should fail
-        // currently we ignore ifup failures.
+        // TODO: Validate SSID/password before rebooting
+        // Currently blindly write the SSID/Passphrase to WPA_Supplica
         wifi_manager.enable_wifi_mode(conn_info, function(error) {
             if (error) {
                 console.log("Enable Wifi ERROR: " + error);
-                console.log("Attempt to re-enable AP mode");
-                wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
-                    console.log("... AP mode reset");
-                    response.redirect("/reboot.html");
-                });
-                response.redirect("/");
+                console.log("Error logged here but doing nothing about it for now.");
             }
-            // Success! - exit
-            console.log("Wifi Enabled! - Exiting");
-            process.exit(0);
         });
     });
 
