@@ -80,7 +80,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
               console.log("Software Updated. Time to reboot!");
             }
             $scope.update_running = false;
-          })
+          });
         }
 
         // Defer load the scanned results from the rpi
