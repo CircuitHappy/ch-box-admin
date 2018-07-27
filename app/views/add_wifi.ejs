@@ -17,7 +17,7 @@
       ng-keyup      = "$event.keyCode == 27 ? change_selection(null) : ''">
 
     <div class = "page-header">
-        <a href="/">Admin</a> > <i class = "fa fa-wifi"></i> Add a Wifi Network
+        <i class = "fa fa-wifi"></i> Add a Wifi Network
         <a href = "#" ng-click = "rescan()" ng-class = "{ 'active': scan_running }">
             <i class = "fa fa-refresh"
                ng-class = "{ 'fa-spin': scan_running }"></i>
@@ -25,6 +25,7 @@
     </div>
 
     <div class = "page-content">
+    <a href="/">Back to Main Page</a>
         <div class = "scan-results-container">
 
             <div class = "scan-result"
