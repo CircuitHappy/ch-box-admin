@@ -24,6 +24,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
         $scope.selected_cell             = null;
         $scope.scan_running              = false;
         $scope.update_running            = false;
+        $scope.update_status_message     = "";
         $scope.network_passcode          = "";
         $scope.show_passcode_entry_field = false;
 
@@ -73,14 +74,17 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
         }
 
         $scope.get_software = function() {
-          console.log("clicked update button.");
-          // PiManager.update_software().then(function(response) {
-          //   console.log(response.data);
-          //   if (response.data.status == "SUCCESS") {
-          //     console.log("Software Updated. Time to reboot!");
-          //   }
-          //   $scope.update_running = false;
-          // });
+          $scope.update_status_message = "Checking CircuitHappy.com for updates...";
+          PiManager.update_software().then(function(response) {
+            console.log(response.data);
+            if (response.data.status == "SUCCESS") {
+              console.log("Software Updated. Time to reboot!");
+              $scope.update_status_message = "New software installed. Rebooting.";
+            } else {
+              $scope.update_status_message = "Software not installed.";
+            }
+            $scope.update_running = false;
+          });
         }
 
         // Defer load the scanned results from the rpi
@@ -102,7 +106,7 @@ app.service("PiManager", ["$http",
                 return $http.post("/api/enable_wifi", wifi_info);
             },
             update_software: function() {
-                return $.http.post("/api/update_software");
+                return $http.get("/api/update_software");
             }
         };
     }]

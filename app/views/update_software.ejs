@@ -20,14 +20,16 @@
         Update Software
         <a href = "#" ng-click = "get_software()" ng-class = "{ 'active': update_running }">
             <i class = "fa fa-refresh"
-               ng-class = "{ 'fa-spin': scan_running }"></i>
+               ng-class = "{ 'fa-spin': update_running }"></i>
         </a>
     </div>
 
     <div class = "page-content">
         <a href="/">Back to Main Page</a>
         <div class = "scan-results-container">
-
+          <p>Click the button to check for software updates and install if available:</p>
+          <button ng-click="get_software()">Update Software</button>
+          <p>{{update_status_message}}</p>
         </div>
     </div>
 

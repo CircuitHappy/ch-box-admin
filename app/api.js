@@ -52,17 +52,6 @@ module.exports = function(wifi_manager, callback) {
         response.render("update_software");
     });
 
-    app.get("/api/update_software"), function(request, response) {
-      console.log("Server got /api/update_software");
-      software_updater.update_software(function(error) {
-        if (error) {
-          console.log("Software update error: " + error);
-          response.redirect("/");
-        }
-        response.redirect("/reboot.html");
-      });
-    };
-
     // Setup HTTP routes for various APIs we wish to implement
     // the responses to these are typically JSON
     app.get("/api/rescan_wifi", function(request, response) {
@@ -70,6 +59,17 @@ module.exports = function(wifi_manager, callback) {
         iwlist(function(error, result) {
             log_error_send_success_with(result[0], error, response);
         });
+    });
+
+    app.get("/api/update_software", function(request, response) {
+      console.log("Server got /api/update_software");
+      wifi_manager.update_software(function(error) {
+        if (error) {
+          console.log("Software update error: " + error);
+          response.redirect("/");
+        }
+        response.redirect("/reboot.html");
+      });
     });
 
     app.post("/api/enable_wifi", function(request, response) {
