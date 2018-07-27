@@ -286,7 +286,7 @@ module.exports = function() {
                 // Add SSID to wpa_supplicant...
                 function run_update_script(next_step) {
                     exec("sh /ch/current/bin/get_latest_software.sh", function(error, stdout, stderr) {
-                        console.log(stdout);
+                        console.log(stderr);
                         if (!error) console.log("... software update finished");
                         next_step();
                     });
