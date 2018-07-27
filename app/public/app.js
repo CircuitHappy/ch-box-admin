@@ -71,7 +71,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             });
         }
 
-        $scope.update_software = function() {
+        $scope.get_software = function() {
           PiManager.update_software().then(function(response) {
             console.log(response.data);
             if (response.data.status == "SUCCESS") {

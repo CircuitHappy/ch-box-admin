@@ -17,16 +17,16 @@
       ng-keyup      = "$event.keyCode == 27 ? change_selection(null) : ''">
 
     <div class = "page-header">
-        <a href="./index.html">Admin</a> > Update Software
+        Update Software
+        <a href = "#" ng-click = "get_software()" ng-class = "{ 'active': udpate_running }">
+            <i class = "fa fa-refresh"
+               ng-class = "{ 'fa-spin': udpate_running }"></i>
+        </a>
     </div>
 
     <div class = "page-content">
+        <a href="/">Back to Main Page</a>
         <div class = "scan-results-container">
-
-            Click to check for Software Update: <a href = "#" ng-click = "update_software()" ng-class = "{ 'active': update_running }">
-                <i class = "fa fa-refresh"
-                   ng-class = "{ 'fa-spin': update_running }"></i>
-            </a>
 
         </div>
     </div>
