@@ -61,7 +61,7 @@ module.exports = function(wifi_manager, callback) {
         }
         response.redirect("/reboot.html");
       });
-    }
+    };
 
     // Setup HTTP routes for various APIs we wish to implement
     // the responses to these are typically JSON

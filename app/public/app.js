@@ -23,6 +23,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
         $scope.scan_results              = [];
         $scope.selected_cell             = null;
         $scope.scan_running              = false;
+        $scope.update_running            = false;
         $scope.network_passcode          = "";
         $scope.show_passcode_entry_field = false;
 
