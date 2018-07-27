@@ -1,8 +1,8 @@
-# raspberry-wifi-conf
+# ch-box-admin
 
-## Heavily altered version for Missing Link
+## Heavily altered version of raspberry-wifi-conf for administering Missing Link
 
-A Node application which makes connecting your RaspberryPi to your home wifi easier
+A Node application which makes connecting your RaspberryPi to your home wifi easier and also allows you to update the Circuit Happy software in case there are updates.
 
 ***
 
@@ -100,17 +100,17 @@ Find TimeoutStartSec and set to 1sec:
 
 ### Install NodeJS Server
 
-1. Install "rpi-zero" branch of [raspberry-wifi-conf](https://github.com/CircuitHappy/raspberry-wifi-conf)
+1. Install "master" branch of [ch-box-admin](https://github.com/CircuitHappy/ch-box-admin)
 
 ```
-git clone https://github.com/CircuitHappy/raspberry-wifi-conf.git
-git checkout rpi-zero
+git clone https://github.com/CircuitHappy/ch-box-admin.git
+git checkout master
 ```
 
 2. Follow these install instructions:
 
 ```
-cd raspberry-wifi-conf
+cd ch-box-admin
 
 npm update
 
@@ -118,11 +118,11 @@ bower install
 
 sudo npm run-script provision
 
-sudo cp assets/init.d/raspberry-wifi-conf /etc/init.d/raspberry-wifi-conf
+sudo cp assets/init.d/ch-box-admin /etc/init.d/ch-box-admin
 
-sudo chmod +x /etc/init.d/raspberry-wifi-conf
+sudo chmod +x /etc/init.d/ch-box-admin
 
-sudo update-rc.d raspberry-wifi-conf defaults
+sudo update-rc.d ch-box-admin defaults
 ```
 
 3. Reboot and Bob’s your uncle
