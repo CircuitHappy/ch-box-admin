@@ -1,7 +1,7 @@
 {
-  "name": "raspberry-wifi-conf",
+  "name": "ch-box-admin",
   "version": "0.0.1",
-  "description": "Node RPI Wifi Configuration Application",
+  "description": "Node RPI Wifi Configuration and Software Updater Application",
   "main": "server.js",
   "scripts": {
     "test": "npm test",
@@ -9,19 +9,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/sabhiram/raspberry-wifi-conf.git"
+    "url": "git://github.com/CircuitHappy/ch-box-admin.git"
   },
   "keywords": [
     "RaspberryPi",
     "Node",
     "Wifi"
   ],
-  "author": "Shaba Abhiram",
+  "author": "Shaba Abhiram (original) & Ed Guild (fork)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sabhiram/raspberry-wifi-conf/issues"
+    "url": "https://github.com/CircuitHappy/ch-box-admin/issues"
   },
-  "homepage": "https://github.com/sabhiram/raspberry-wifi-conf",
+  "homepage": "https://github.com/CircuitHappy/ch-box-admin",
   "dependencies": {
     "body-parser": "^1.11.0",
     "underscore": "~1.7.0",
