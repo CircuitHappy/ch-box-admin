@@ -10,7 +10,7 @@ module.exports = function(cmd_options, callback) {
         cmd_options = "";
     }
 
-    exec("sh /ch/current/bin/get_latest_software.sh", function(error, stdout, stderr) {
+    exec("sh /ch/current/bin/ch-get-latest-software.sh", function(error, stdout, stderr) {
         // Handle errors from running "iwlist scan"
         if (error) {
             return callback(error, "")
