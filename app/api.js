@@ -1,6 +1,7 @@
 var path       = require("path"),
     util       = require("util"),
     iwlist     = require("./iwlist"),
+    update     = require("./software_updater"),
     express    = require("express"),
     bodyParser = require('body-parser'),
     config     = require("../config.json"),
@@ -63,12 +64,8 @@ module.exports = function(wifi_manager, callback) {
 
     app.get("/api/update_software", function(request, response) {
       console.log("Server got /api/update_software");
-      wifi_manager.update_software(function(error) {
-        if (error) {
-          console.log("Software update error: " + error);
-          response.redirect("/");
-        }
-        response.redirect("/reboot.html");
+      update(function(error, result) {
+        log_error_send_success_with(result[0], error, response);
       });
     });
 

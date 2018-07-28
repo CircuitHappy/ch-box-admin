@@ -74,14 +74,33 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
         }
 
         $scope.get_software = function() {
-          $scope.update_status_message = "Checking CircuitHappy.com for updates...";
+          $scope.download_status_message = "Downloading update...";
+          $scope.update_running = true;
           PiManager.update_software().then(function(response) {
             console.log(response.data);
             if (response.data.status == "SUCCESS") {
-              console.log("Software Updated. Time to reboot!");
-              $scope.update_status_message = "New software installed. Rebooting.";
+              $scope.update_status_message = "New software installed. Rebooting Missing Link.";
             } else {
-              $scope.update_status_message = "Software not installed.";
+              console.log("error code: " + response.data.error["code"]);
+              switch (response.data.error["code"]) {
+                case 1:
+                  $scope.update_status_message = "No updates available.";
+                  break;
+                case 2:
+                  $scope.update_status_message = "Error downloading update. Try again in a few minutes. Contact support if this problem persists.";
+                  break;
+                case 3:
+                  $scope.update_status_message = "Error validating installer. Try again in a few minutes. Contact support if this problem persists.";
+                  break;
+                case 4:
+                  $scope.update_status_message = "Error extracting installer files. Try again in a few minutes. Contact support if this problem persists.";
+                  break;
+                case 5:
+                  $scope.update_status_message = "Error relinking files. Your system might need to be reinstalled. Please contact support to find out how to do this.";
+                  break;
+                default:
+                  $scope.update_status_message = "Updater hit an unexpected error. Is this device connected to the Internet?";
+              }
             }
             $scope.update_running = false;
           });

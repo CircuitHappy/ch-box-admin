@@ -276,46 +276,6 @@ module.exports = function() {
 
     };
 
-    // Software Updater Functions
-    _update_software = function(callback) {
-
-        // _is_software_uptodate(function(error) {
-        //     if (error) return callback(error);
-
-            async.series([
-                // Add SSID to wpa_supplicant...
-                function run_update_script(next_step) {
-                    exec("sh /ch/current/bin/get_latest_software.sh", function(error, stdout, stderr) {
-                        console.log(stderr);
-                        if (!error) console.log("... software update finished");
-                        next_step();
-                    });
-                },
-
-                //don't want to reboot if not needed
-                function write_boot_status_and_wait(next_step) {
-                    _write_wifi_status("REBOOT");
-                    setTimeout( function () {
-                      console.log("about to reboot.");
-                    }, 2000);
-                    next_step();
-                },
-
-                // reboot the machine...
-                // function reboot(next_step) {
-                //     exec("shutdown -r now", function(error, stdout, stderr) {
-                //         console.log(stdout);
-                //         if (!error) console.log("... rebooting");
-                //         next_step();
-                //     });
-                // },
-
-            ], callback);
-        // });
-
-    };
-
-
     return {
         get_wifi_info:           _get_wifi_info,
 
