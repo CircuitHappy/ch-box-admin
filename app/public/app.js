@@ -80,6 +80,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             console.log(response.data);
             if (response.data.status == "SUCCESS") {
               $scope.update_status_message = "New software installed. Rebooting Missing Link.";
+              PiManager.reboot_box();
             } else {
               console.log("error code: " + response.data.error["code"]);
               switch (response.data.error["code"]) {
@@ -126,6 +127,9 @@ app.service("PiManager", ["$http",
             },
             update_software: function() {
                 return $http.get("/api/update_software");
+            },
+            reboot_box: function() {
+                return $http.get("/api/reboot");
             }
         };
     }]

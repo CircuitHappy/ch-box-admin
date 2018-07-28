@@ -276,6 +276,31 @@ module.exports = function() {
 
     };
 
+    // Disables AP mode and reverts to wifi connection
+    _reboot = function(connection_info, callback) {
+
+          async.series([
+              function write_boot_status_and_wait(next_step) {
+                  _write_wifi_status("REBOOT");
+                  setTimeout( function () {
+                    console.log("about to reboot.");
+                  }, 2000);
+                  next_step();
+              },
+
+              // reboot the machine...
+              function reboot(next_step) {
+                  exec("shutdown -r now", function(error, stdout, stderr) {
+                      console.log(stdout);
+                      if (!error) console.log("... rebooting");
+                      next_step();
+                  });
+              },
+
+          ], callback);
+    };
+
+
     return {
         get_wifi_info:           _get_wifi_info,
 
@@ -289,5 +314,7 @@ module.exports = function() {
         enable_wifi_mode:        _enable_wifi_mode,
 
         write_wifi_status:       _write_wifi_status,
+
+        reboot:                  _reboot
     };
 }

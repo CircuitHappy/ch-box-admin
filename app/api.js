@@ -69,6 +69,11 @@ module.exports = function(wifi_manager, callback) {
       });
     });
 
+    app.get("/api/reboot", function(request, response) {
+      console.log("Server got /api/update_software");
+      wifi_manager.reboot();
+    });
+
     app.post("/api/enable_wifi", function(request, response) {
         var conn_info = {
             wifi_ssid:      request.body.wifi_ssid,
