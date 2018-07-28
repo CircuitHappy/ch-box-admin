@@ -289,7 +289,5 @@ module.exports = function() {
         enable_wifi_mode:        _enable_wifi_mode,
 
         write_wifi_status:       _write_wifi_status,
-
-        update_software:           _update_software
     };
 }
