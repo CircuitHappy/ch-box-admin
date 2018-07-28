@@ -16,7 +16,7 @@ html, body {
 
     -webkit-user-select: none;
 
-    background: #000000; /*#039be5;*/
+    background: linear-gradient(to bottom right, rgba(255, 204, 64, 1.0), rgba(237, 9, 115, 1.0));
     border-bottom: 2px solid #ffffff;
 }
 .page-header a {
@@ -245,4 +245,14 @@ html, body {
 }
 .btn-ok:hover {
     background: #22ff22;
+}
+
+ul.main-menu {
+  text-align: center;
+}
+ul.main-menu li {
+  display: inline-block;
+  margin: 1em;
+  padding: 5em;
+  border: solid 1px black;
 }
