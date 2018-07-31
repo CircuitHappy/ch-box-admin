@@ -63,14 +63,19 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
                 wifi_ssid:      $scope.selected_cell["ssid"],
                 wifi_passcode:  $scope.network_passcode,
             };
-            location.href = "reboot.html";
-            PiManager.enable_wifi(wifi_info).then(function(response) {
-                console.log(response.data);
-                if (response.data.status == "SUCCESS") {
-                    console.log("AP Enabled - nothing left to do...");
-                    //redirect would be good here on success, but success isn't being echo'd back.
-                }
-            });
+            if (wifi_info["wifi_passcode"].length >= 8 && wifi_info["wifi_passcode"].length <= 63) {
+              location.href = "reboot.html";
+              PiManager.enable_wifi(wifi_info).then(function(response) {
+                  console.log(response.data);
+                  if (response.data.status == "SUCCESS") {
+                      console.log("AP Enabled - nothing left to do...");
+                      //redirect would be good here on success, but success isn't being echo'd back.
+                  }
+              });
+            } else {
+              alert("WiFi password needs to be between 8 and 63 characters in length.");
+            }
+
         }
 
         $scope.get_software = function() {

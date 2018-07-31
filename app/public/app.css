@@ -1,3 +1,11 @@
+:root {
+  --ch-orange: rgba(255, 204, 64, 1.0);
+  --ch-pink: rgba(237, 9, 115, 1.0);
+  --ch-pink-dark: rgba(180, 0, 50, 1.0);
+  --ch-cyan: rgba(0, 220, 240, 1.0);
+  --ch-cyan-dark: rgba(0, 110, 140, 1.0);
+}
+
 html, body {
     margin: 0; padding: 0;
     font-family: "Roboto", "PT Sans", sans-serif;
@@ -16,7 +24,7 @@ html, body {
 
     -webkit-user-select: none;
 
-    background: linear-gradient(to bottom right, rgba(255, 204, 64, 1.0), rgba(237, 9, 115, 1.0));
+    background: linear-gradient(to bottom right, var(--ch-orange), var(--ch-pink));
     border-bottom: 2px solid #ffffff;
 }
 .page-header a {
@@ -36,11 +44,11 @@ html, body {
     transition:         all 0.3s ease;
 }
 .page-header a:hover {
-    color: yellow;
+    color: var(--ch-orange);
     background: #444444;
 }
 .page-header .active {
-    color: yellow;
+    color: var(--ch-orange);
     background: #444444;
 }
 .page-header a i {
@@ -53,6 +61,7 @@ html, body {
 .page-content {
     width: 100%;
     height: calc(100% - 50px);
+    padding: 0.5em;
 }
 
 .scan-results-container {
@@ -85,11 +94,11 @@ html, body {
     background: #222222;
 }
 .scan-result:hover {
-    color: yellow;
+    color: var(--ch-orange);
     background: #444444;
 }
 .scan-result.selected {
-    color: yellow;
+    color: var(--ch-orange);
     background: #888888;
 }
 .scan-result .ssid {
@@ -233,26 +242,29 @@ html, body {
     cursor: pointer;
 }
 .btn-cancel {
-    background: #881111;
+    background: var(--ch-pink-dark);
     top: 90px; left: 20px;
 }
 .btn-ok {
     top: 90px; left: 170px;
-    background: #118811;
+    background: var(--ch-cyan-dark);
 }
 .btn-cancel:hover {
-    background: #ff2222;
+    background: var(--ch-pink);
 }
 .btn-ok:hover {
-    background: #22ff22;
+    background: var(--ch-cyan);
 }
 
 ul.main-menu {
   text-align: center;
+  list-style-type: none;
+  -webkit-padding-start: 0;
 }
 ul.main-menu li {
   display: inline-block;
   margin: 1em;
-  padding: 5em;
+  padding: 3em;
   border: solid 1px black;
+  list-style-position:inside;
 }
