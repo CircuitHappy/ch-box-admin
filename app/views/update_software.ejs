@@ -23,10 +23,15 @@
     <div class = "page-content">
         <a href="/">Back to Main Page</a>
         <div class = "scan-results-container">
-          <p>Click the button to check for software updates:</p>
+          <p>Click the button below to update your Missing Link software:</p>
           <button ng-click="get_software()" ng-disabled="update_running">Check For and Install Update</button> <i class = "fa fa-refresh" ng-class = "{ 'fa-spin': update_running }" ng-show = "update_running"></i>
           <p>{{update_status_message}}</p>
         </div>
+    </div>
+
+    <div class = "page-footer">
+      <p><img src="footer_logo.png"/></p>
+      <p>User License Agreement</p>
     </div>
 
     <!-- Scripts load last -->
