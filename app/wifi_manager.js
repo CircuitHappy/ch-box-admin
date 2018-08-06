@@ -176,6 +176,17 @@ module.exports = function() {
             // Here we need to actually follow the steps to enable the ap
             async.series([
 
+              function apply_hostname_to_ssid(next_step) {
+                exec("hostname", function(error, stdout, stderr) {
+                    console.log(stdout);
+                    if (!error) {
+                      config.ssid = stdout;
+                      console.log("... SSID is " + config.ssid);
+                    }
+                    next_step();
+                });
+              },
+
               // Set up hostapd conf SSID
               function update_interfaces(next_step) {
                   write_template_to_file(
