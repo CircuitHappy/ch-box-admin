@@ -180,8 +180,8 @@ module.exports = function() {
                 exec("hostname", function(error, stdout, stderr) {
                     console.log(stdout);
                     if (!error) {
-                      config.ssid = stdout;
-                      console.log("... SSID is " + config.ssid);
+                      config.access_point.ssid = stdout;
+                      console.log("... SSID is " + config.access_point.ssid);
                     }
                     next_step();
                 });
