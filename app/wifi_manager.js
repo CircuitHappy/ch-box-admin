@@ -288,7 +288,7 @@ module.exports = function() {
     };
 
     // Disables AP mode and reverts to wifi connection
-    _reboot = function(connection_info, callback) {
+    _reboot = function(callback) {
 
           async.series([
               function write_boot_status_and_wait(next_step) {

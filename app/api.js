@@ -71,8 +71,13 @@ module.exports = function(wifi_manager, callback) {
 
     app.get("/api/reboot", function(request, response) {
       console.log("Server got /api/update_software");
-      wifi_manager.reboot();
-      response.redirect("/reboot.html");
+      wifi_manager.reboot(function(error) {
+        if (error) {
+          console.log("Reboot got an error: " + error);
+        } else {
+          response.redirect("/reboot.html");
+        }
+      });
     });
 
     app.post("/api/enable_wifi", function(request, response) {
