@@ -135,7 +135,7 @@ app.service("PiManager", ["$http",
                 return $http.get("/api/update_software");
             },
             reboot_box: function() {
-                return $http.post("/api/reboot");
+                return $http.get("/api/reboot");
             }
         };
     }]
