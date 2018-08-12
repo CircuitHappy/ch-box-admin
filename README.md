@@ -118,11 +118,9 @@ bower install
 
 sudo npm run-script provision
 
-sudo cp assets/init.d/ch-box-admin /etc/init.d/ch-box-admin
+sudo cp assets/systemd/ch-box-admin.service /etc/systemd/system/ch-box-admin
 
-sudo chmod +x /etc/init.d/ch-box-admin
-
-sudo update-rc.d ch-box-admin defaults
+sudo systemctl enable ch-box-admin
 ```
 
 3. Reboot and Bob’s your uncle
