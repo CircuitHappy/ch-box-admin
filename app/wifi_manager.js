@@ -190,7 +190,7 @@ module.exports = function() {
               // Set up hostapd conf SSID
               function update_interfaces(next_step) {
                   write_template_to_file(
-                      "./assets/etc/hostapd/hostapd.conf.template",
+                      "/ch/current/assets/etc/hostapd/hostapd.conf.template",
                       "/etc/hostapd/hostapd.conf",
                       context, next_step);
               },
