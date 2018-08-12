@@ -35,7 +35,10 @@ async.series([
 
     //2. Check if wifi is enabled / connected
     function test_is_wifi_enabled(next_step) {
-        wifi_manager.write_wifi_status("TRYING_TO_CONNECT");
+      wifi_manager.write_wifi_status("TRYING_TO_CONNECT");
+      sleep(3000, function() {
+        console.log("Sleeping for a few seconds to let the network catch up.");
+      })
         wifi_manager.is_wifi_enabled(function(error, result_ip) {
             if (result_ip) {
                 console.log("\nWifi is enabled, and IP " + result_ip + " assigned");
@@ -69,3 +72,11 @@ async.series([
         console.log("ERROR: " + error);
     }
 });
+
+function sleep(time, callback) {
+    var stop = new Date().getTime();
+    while(new Date().getTime() < stop + time) {
+        ;
+    }
+    callback();
+}
