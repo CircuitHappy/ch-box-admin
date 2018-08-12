@@ -1,0 +1,13 @@
+[Unit]
+Description=Circuit Happy Box Administration
+Documentation=https://circuithappy.com
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/node /ch/current/www/ch-box-admin/server.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
