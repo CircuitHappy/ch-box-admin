@@ -265,21 +265,17 @@ module.exports = function() {
                     });
                 },
 
-                function write_boot_status_and_wait(next_step) {
+                function write_boot_status_and_wait_to_reboot(next_step) {
                     _write_wifi_status("REBOOT");
+                    console.log("about to reboot.");
                     setTimeout( function () {
-                      console.log("about to reboot.");
+                      exec("shutdown -r now", function(error, stdout, stderr) {
+                          console.log(stdout);
+                          if (!error) console.log("... rebooting");
+                          next_step();
+                      });
                     }, 2000);
                     next_step();
-                },
-
-                // reboot the machine...
-                function reboot(next_step) {
-                    exec("shutdown -r now", function(error, stdout, stderr) {
-                        console.log(stdout);
-                        if (!error) console.log("... rebooting");
-                        next_step();
-                    });
                 },
 
             ], callback);
@@ -291,21 +287,15 @@ module.exports = function() {
     _reboot = function(callback) {
 
           async.series([
-              function write_boot_status_and_wait(next_step) {
+              function write_boot_status_and_wait_to_reboot(next_step) {
                   _write_wifi_status("REBOOT");
                   setTimeout( function () {
-                    console.log("about to reboot.");
+                    exec("shutdown -r now", function(error, stdout, stderr) {
+                        console.log(stdout);
+                        if (!error) console.log("... rebooting");
+                    });
                   }, 2000);
                   next_step();
-              },
-
-              // reboot the machine...
-              function reboot(next_step) {
-                  exec("shutdown -r now", function(error, stdout, stderr) {
-                      console.log(stdout);
-                      if (!error) console.log("... rebooting");
-                      next_step();
-                  });
               },
 
           ], callback);
