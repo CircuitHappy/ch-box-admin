@@ -306,11 +306,11 @@ module.exports = function() {
 
           async.series([
               function get_software_version(next_step) {
-                  exec("cp /ch/version.txt ./app/views/", function(error, stdout, stderr) {
+                  exec("cp /ch/version.txt /ch/current/www/ch-box-admin/app/views/", function(error, stdout, stderr) {
                       if (error) {
-                        console.log("could not copy /ch/version.txt !");
-                        exec("sh -c \'echo unknown > ./app/views/version.txt\'", function(error, stdout, stderr) {
-                          if (error) console.log("Serious error in the file system: could not write to ./app/views/version.txt !");
+                        console.log("cannot copy: " + error);
+                        exec("sh -c \'echo unknown > /ch/current/www/ch-box-admin/app/views/version.txt\'", function(error, stdout, stderr) {
+                          if (error) console.log("cannot write file: " + error);
                         });
                       }
                   });

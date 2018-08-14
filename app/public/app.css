@@ -103,11 +103,11 @@ html, body {
 }
 .scan-result:hover {
     color: white;
-    background: var(--ch-pink-dark);
+    background: var(--ch-pink);
 }
 .scan-result.selected {
-    color: var(--ch-orange);
-    background: #888888;
+    color: white;
+    background: var(--ch-pink);
 }
 .scan-result .ssid {
     position: absolute;
@@ -125,7 +125,7 @@ html, body {
 }
 
 .scan-results-container button {
-    border: 1px solid var(--ch-pink-dark);
+    border: 2px solid var(--ch-pink-dark);
     background: var(--ch-pink);
     color: white;
     font-size: 1em;
@@ -135,10 +135,13 @@ html, body {
     border-radius: 4px;
 }
 .scan-results-container button:hover {
-    background: var(--ch-pink-dark);
+    background: var(--ch-orange);
+    border: 2px solid var(--ch-pink);
+    color: var(--ch-pink);
 }
 .scan-results-container button:active {
-    color: var(--ch-orange);
+    color: var(--ch-pink-dark);
+    border: 2px solid var(--ch-pink-dark);
 }
 
 /*
