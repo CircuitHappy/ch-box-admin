@@ -26,12 +26,13 @@
           <p>Click the button below to update your Missing Link software:</p>
           <button ng-click="get_software()" ng-disabled="update_running">Check For and Install Update</button> <i class = "fa fa-refresh" ng-class = "{ 'fa-spin': update_running }" ng-show = "update_running"></i>
           <p>{{update_status_message}}</p>
+          <p>Current software version: <%- include ../../../../version.txt %></p>
         </div>
     </div>
 
     <div class = "page-footer">
       <p><img src="footer_logo.png"/></p>
-      <p>User License Agreement</p>
+      <p>Missing Link software version: <%- include ../../../../version.txt %></p>
     </div>
 
     <!-- Scripts load last -->
