@@ -33,6 +33,12 @@ async.series([
         });
     },
 
+    // web pages are dependent on version.txt being in ./app/views
+    function update_version_txt(next_step) {
+        wifi_manager.update_version_file();
+        next_step();
+    },
+
     //2. Check if wifi is enabled / connected
     function test_is_wifi_enabled(next_step) {
       wifi_manager.write_wifi_status("TRYING_TO_CONNECT");

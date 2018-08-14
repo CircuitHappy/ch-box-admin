@@ -283,7 +283,7 @@ module.exports = function() {
 
     };
 
-    // Disables AP mode and reverts to wifi connection
+    // Reboots the box
     _reboot = function(callback) {
 
           async.series([
@@ -295,6 +295,25 @@ module.exports = function() {
                         if (!error) console.log("... rebooting");
                     });
                   }, 2000);
+                  next_step();
+              },
+
+          ], callback);
+    };
+
+    // copy /ch/version.txt to .app/views for easier reading of the version file.
+    _update_version_file = function(callback) {
+
+          async.series([
+              function get_software_version(next_step) {
+                  exec("cp /ch/version.txt ./app/views/", function(error, stdout, stderr) {
+                      if (error) {
+                        console.log("could not copy /ch/version.txt !");
+                        exec("echo unknown > ./app/views/version.txt", function(error, stdout, stderr) {
+                          if (error) console.log("Serious error in the file system: could not write to ./app/views/version.txt !");
+                        });
+                      }
+                  });
                   next_step();
               },
 
@@ -316,6 +335,8 @@ module.exports = function() {
 
         write_wifi_status:       _write_wifi_status,
 
-        reboot:                  _reboot
+        reboot:                  _reboot,
+
+        update_version_file:     _update_version_file
     };
 }
