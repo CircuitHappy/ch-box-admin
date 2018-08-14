@@ -309,7 +309,7 @@ module.exports = function() {
                   exec("cp /ch/version.txt ./app/views/", function(error, stdout, stderr) {
                       if (error) {
                         console.log("could not copy /ch/version.txt !");
-                        exec("echo unknown > ./app/views/version.txt", function(error, stdout, stderr) {
+                        exec("sh -c \'echo unknown > ./app/views/version.txt\'", function(error, stdout, stderr) {
                           if (error) console.log("Serious error in the file system: could not write to ./app/views/version.txt !");
                         });
                       }
