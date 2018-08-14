@@ -102,8 +102,8 @@ html, body {
     background: var(--ch-black);
 }
 .scan-result:hover {
-    color: var(--ch-orange);
-    background: #552233;
+    color: white;
+    background: var(--ch-pink-dark);
 }
 .scan-result.selected {
     color: var(--ch-orange);
@@ -122,6 +122,23 @@ html, body {
     position: absolute;
     top: 0; left: 85%;
     width: 10%; height: 100%;
+}
+
+.scan-results-container button {
+    border: 1px solid var(--ch-pink-dark);
+    background: var(--ch-pink);
+    color: white;
+    font-size: 1em;
+    padding: 0.5em 0.75em;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+.scan-results-container button:hover {
+    background: var(--ch-pink-dark);
+}
+.scan-results-container button:active {
+    color: var(--ch-orange);
 }
 
 /*
