@@ -63,7 +63,7 @@ html, body {
 .page-content {
     width: 100%;
     /*height: calc(100% - 136px);*/
-    padding: 1em;
+    padding: 0;
 }
 
 .page-footer {
@@ -124,7 +124,19 @@ html, body {
     width: 10%; height: 100%;
 }
 
-.scan-results-container button {
+.updater-content {
+  margin: 0 auto;
+  margin-bottom: 10px;
+  padding: 1em;
+  max-width: 400px;
+  border-bottom: 2px solid white;
+}
+
+.updater_button {
+    padding: 1em;
+    text-align: center;
+}
+.updater_button button {
     border: 2px solid var(--ch-pink-dark);
     background: var(--ch-pink);
     color: white;
@@ -134,14 +146,18 @@ html, body {
     -moz-border-radius: 4px;
     border-radius: 4px;
 }
-.scan-results-container button:hover {
+.updater_button button:hover {
     background: var(--ch-orange);
     border: 2px solid var(--ch-pink);
     color: var(--ch-pink);
 }
-.scan-results-container button:active {
+.updater_button button:active {
     color: var(--ch-pink-dark);
     border: 2px solid var(--ch-pink-dark);
+}
+
+.menu-bar {
+  margin: 1em;
 }
 
 /*
@@ -227,35 +243,39 @@ html, body {
 
 .rwc-password-entry-container .box {
     position: absolute;
-    top:0;
+    top: -150px;
     bottom: 0;
     left: 0;
     right: 0;
 
     margin: auto;
+    padding: 20px;
 
-    width: 320px;
-    height: 150px;
+    width: 330px;
+    height: 115px;
 
     background: rgba(0,0,0,1.0);
     border: 2px solid #666666;
 }
 
 .rwc-password-entry-container .box input {
-    width: 90%;
+    width: 325px;
     height: 50px; line-height: 50px;
 
     font-size: 18pt;
     border: 0;
 
-    margin-left: 5%;
-    margin-top: 15px;
+    padding-left: 5px;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .rwc-password-entry-container .box .btn {
-    width: 130px;
+    width: 155px;
     height: 40px; line-height: 40px;
     text-align: center;
+    font-size: 18px;
 
     border: 2px solid #000000;
 
@@ -271,10 +291,10 @@ html, body {
 }
 .btn-cancel {
     background: var(--ch-pink-dark);
-    top: 90px; left: 20px;
+    top: 90px; left: 18px;
 }
 .btn-ok {
-    top: 90px; left: 170px;
+    top: 90px; left: 193px;
     background: var(--ch-cyan-dark);
 }
 .btn-cancel:hover {
