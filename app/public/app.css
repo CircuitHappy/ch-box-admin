@@ -72,6 +72,10 @@ html, body {
   text-align: center;
 }
 
+.page-footer img {
+  width:5em;
+}
+
 .scan-results-container {
     margin: 0 auto;
     margin-bottom: 10px;
@@ -316,4 +320,7 @@ ul.main-menu li {
   padding: 3em;
   border: solid 1px var(--ch-black);
   list-style-position:inside;
+}
+ul.main-menu img {
+  width: 10em;
 }
