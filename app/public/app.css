@@ -63,6 +63,10 @@ html, body {
     padding: 0;
 }
 
+img.rebooting {
+  text-align: center;
+}
+
 .page-footer {
   width: 100%;
   color: black;
