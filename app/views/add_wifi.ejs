@@ -16,7 +16,7 @@
 <body ng-controller = "AppController"
       ng-keyup      = "$event.keyCode == 27 ? change_selection(null) : ''">
 
-    <div class = "page-header">
+    <div class = "page-header" data-ng-init = "rescan()">
         <i class = "fa fa-wifi"></i> Add a Wifi Network
         <a href = "#" ng-click = "rescan()" ng-class = "{ 'active': scan_running }">
             <i class = "fa fa-refresh"
@@ -49,7 +49,7 @@
         visible     = "show_passcode_entry_field"
         passcode    = "network_passcode"
         reset       = "change_selection()"
-        submit      = "submit_selection()"
+        submit      = "submit_selection();show_boot_screen();"
         ng-keydown  = "{esc: 'close_password_entry()'}" />
 
     <!-- Scripts load last -->

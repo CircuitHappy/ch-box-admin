@@ -50,6 +50,10 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             });
         }
 
+        $scope.show_boot_screen = function() {
+          window.location = "/reboot.html";
+        }
+
         $scope.change_selection = function(cell) {
             $scope.network_passcode = "";
             $scope.selected_cell = cell;
@@ -71,7 +75,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
                       //redirect would be good here on success, but success isn't being echo'd back.
                   }
               });
-              response.redirect("/reboot.html");
+
               PiManager.reboot_box();
             } else {
               alert("WiFi password needs to be between 8 and 63 characters in length.");
@@ -115,7 +119,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
         }
 
         // Defer load the scanned results from the rpi
-        $scope.rescan();
+        //$scope.rescan();
     }]
 );
 

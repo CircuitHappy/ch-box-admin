@@ -46,6 +46,7 @@ module.exports = function(wifi_manager, callback) {
     });
 
     app.get("/reboot.html", function(request, response) {
+        console.log("got a /reboot.html");
         response.render("reboot");
     });
 
@@ -71,6 +72,7 @@ module.exports = function(wifi_manager, callback) {
 
     app.get("/api/reboot", function(request, response) {
       console.log("Server got /api/reboot");
+
       wifi_manager.reboot(function(error) {
         if (error) {
           console.log("Reboot got an error: " + error);
@@ -86,7 +88,7 @@ module.exports = function(wifi_manager, callback) {
 
         //no error checks, just return to root page
         //no process.exit, so this should just keep the webserver running
-        console.log("should be redirecting to reboot.html now...");
+        console.log("should be redirected to reboot.html now...");
 
         // TODO: If wifi did not come up correctly, it should fail
         // currently we ignore ifup failures.
@@ -100,7 +102,7 @@ module.exports = function(wifi_manager, callback) {
                 response.redirect("/");
             }
             // Success! - exit
-            console.log("Wifi Enabled! - Rebooting");
+            console.log("Wifi Enabled! - Rebooting is next");
         });
     });
 
