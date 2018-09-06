@@ -72,6 +72,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
                       //redirect would be good here on success, but success isn't being echo'd back.
                   }
               });
+              PiManager.reboot_box();
             } else {
               alert("WiFi password needs to be between 8 and 63 characters in length.");
             }

@@ -104,7 +104,7 @@ module.exports = function(wifi_manager, callback) {
                 response.redirect("/");
             }
             // Success! - exit
-            console.log("Wifi Enabled! - Exiting");
+            console.log("Wifi Enabled! - Rebooting");
         });
     });
 

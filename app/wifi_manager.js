@@ -265,19 +265,6 @@ module.exports = function() {
                     });
                 },
 
-                function write_boot_status_and_wait_to_reboot(next_step) {
-                    _write_wifi_status("REBOOT");
-                    console.log("about to reboot.");
-                    setTimeout( function () {
-                      exec("shutdown -r now", function(error, stdout, stderr) {
-                          console.log(stdout);
-                          if (!error) console.log("... rebooting");
-                          next_step();
-                      });
-                    }, 2000);
-                    next_step();
-                },
-
             ], callback);
         });
 
