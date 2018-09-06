@@ -74,8 +74,6 @@ module.exports = function(wifi_manager, callback) {
       wifi_manager.reboot(function(error) {
         if (error) {
           console.log("Reboot got an error: " + error);
-        } else {
-          response.redirect("/reboot.html");
         }
       });
     });
@@ -98,7 +96,6 @@ module.exports = function(wifi_manager, callback) {
                 console.log("Attempt to re-enable AP mode");
                 wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
                     console.log("... AP mode reset");
-                    response.redirect("/reboot.html");
                 });
                 response.redirect("/");
             }
