@@ -64,7 +64,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
                 wifi_passcode:  $scope.network_passcode,
             };
             if (wifi_info["wifi_passcode"].length >= 8 && wifi_info["wifi_passcode"].length <= 63) {
-              location.href = "reboot.html";
               PiManager.enable_wifi(wifi_info).then(function(response) {
                   console.log(response.data);
                   if (response.data.status == "SUCCESS") {
