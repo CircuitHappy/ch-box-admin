@@ -10,7 +10,13 @@ module.exports = function(cmd_options, callback) {
         cmd_options = "";
     }
 
-    exec("sh /ch/current/bin/ch-get-latest-software.sh", function(error, stdout, stderr) {
+    console.log("cmd_options: " + cmd_options);
+    var cmd = 'sh /ch/system/current/scripts/ch-get-latest-software.sh';
+    if (cmd_options != "") {
+      cmd = cmd + " " + cmd_options;
+    }
+    console.log("cmd: " + cmd);
+    exec(cmd, function(error, stdout, stderr) {
         // Handle errors from running "iwlist scan"
         if (error) {
             return callback(error, "")

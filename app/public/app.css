@@ -328,3 +328,40 @@ ul.main-menu li {
 ul.main-menu img {
   width: 10em;
 }
+
+.reboot-message-container {
+    color: white;
+    position: absolute;
+
+    top: 0; left: 0;
+    width: 95%; height: 100%;
+    min-height: 40em;
+    padding: 2em;
+    margin: 0 auto;
+
+    background: rgba(19,0,27,1.0);
+
+    -webkit-transition: all 0.3s ease;
+    -moz-transition:    all 0.3s ease;
+    -ms-transition:     all 0.3s ease;
+    -o-transition:      all 0.3s ease;
+    transition:         all 0.3s ease;
+}
+
+.reboot-message {
+  text-align: left;
+  width: 20em;
+  margin: 0 auto;
+}
+.reboot-message img {
+  width:auto;
+}
+
+p.reboot-footer {
+  text-align: center;
+}
+
+img.reboot-footer {
+  padding-top: 1em;
+  width: 4em;
+}

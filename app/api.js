@@ -63,9 +63,12 @@ module.exports = function(wifi_manager, callback) {
         });
     });
 
-    app.get("/api/update_software", function(request, response) {
+    app.post("/api/update_software", function(request, response) {
+      var beta_code = request.body.beta_code;
+      if (beta_code == undefined) {beta_code = "";}
       console.log("Server got /api/update_software");
-      update(function(error, result) {
+      console.log("beta_code: " + beta_code);
+      update(beta_code, function(error, result) {
         log_error_send_success_with(result[0], error, response);
       });
     });

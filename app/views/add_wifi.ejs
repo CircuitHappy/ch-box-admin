@@ -40,6 +40,15 @@
         </div>
     </div>
 
+    <div class="reboot-message-container" ng-show="show_reboot_message">
+      <div class="reboot-message">
+        <p><img class="rebooting" src="rebooting_anim.gif"/></p>
+        <p>Settings are being saved and the system is rebooting.</p>
+        <p>Your Missing Link should be back up and running on your network in a minute.</p>
+        <p class="reboot-footer"><img class="reboot-footer" src="small_white_logo.svg"/></p>
+      </div>
+    </div>
+
     <div class = "page-footer">
       <p><img src="footer_logo.svg"/></p>
       <p>Missing Link software version: <%- include version.txt %></p>
@@ -49,7 +58,7 @@
         visible     = "show_passcode_entry_field"
         passcode    = "network_passcode"
         reset       = "change_selection()"
-        submit      = "submit_selection();show_boot_screen();reboot();"
+        submit      = "submit_selection()"
         ng-keydown  = "{esc: 'close_password_entry()'}" />
 
     <!-- Scripts load last -->
