@@ -71,12 +71,23 @@ img.rebooting {
 }
 
 .page-footer {
-  width: 100%;
   color: black;
   text-align: center;
+  margin: 0 auto;
+  width: 24em;
 }
 
+.page-footer ul {
+  text-align: left;
+  list-style: none;
+  width: 12em;
+  margin: auto;
+  padding: 0;
+}
+
+
 .page-footer img {
+  float: left;
   width:5em;
 }
 

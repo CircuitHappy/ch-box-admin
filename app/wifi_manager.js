@@ -277,11 +277,12 @@ module.exports = function() {
               function write_boot_status_and_wait_to_reboot(next_step) {
                   _write_wifi_status("REBOOT");
                   setTimeout( function () {
-                    exec("shutdown -r now", function(error, stdout, stderr) {
+                    exec("sync;sync;sync;sleep 1;shutdown -r now", function(error, stdout, stderr) {
+                    //exec("shutdown -r now", function(error, stdout, stderr) {
                         console.log(stdout);
                         if (!error) console.log("... rebooting");
                     });
-                  }, 2000);
+                  }, 1000);
                   next_step();
               },
 
@@ -293,14 +294,22 @@ module.exports = function() {
 
           async.series([
               function get_software_version(next_step) {
-                  exec("cp /ch/version.txt /ch/current/www/ch-box-admin/app/views/", function(error, stdout, stderr) {
-                      if (error) {
-                        console.log("cannot copy: " + error);
-                        exec("sh -c \'echo unknown > /ch/current/www/ch-box-admin/app/views/version.txt\'", function(error, stdout, stderr) {
-                          if (error) console.log("cannot write file: " + error);
-                        });
-                      }
-                  });
+                exec("cp /ch/version.txt /ch/current/www/ch-box-admin/app/views/", function(error, stdout, stderr) {
+                    if (error) {
+                      console.log("cannot copy: " + error);
+                      exec("sh -c \'echo unknown > /ch/current/www/ch-box-admin/app/views/version.txt\'", function(error, stdout, stderr) {
+                        if (error) console.log("cannot write file: " + error);
+                      });
+                    }
+                });
+                exec("cp /ch/system-version.txt /ch/current/www/ch-box-admin/app/views/", function(error, stdout, stderr) {
+                    if (error) {
+                      console.log("cannot copy: " + error);
+                      exec("sh -c \'echo unknown > /ch/current/www/ch-box-admin/app/views/system-version.txt\'", function(error, stdout, stderr) {
+                        if (error) console.log("cannot write file: " + error);
+                      });
+                    }
+                });
                   next_step();
               },
 
