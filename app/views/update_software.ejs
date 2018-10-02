@@ -28,10 +28,10 @@
           <p>Your Missing Link will reboot after a successful update.</p>
           <div class="updater_button">
             <button ng-click="get_software()" ng-disabled="update_running">Check For and Install Update</button> <i class = "fa fa-refresh" ng-class = "{ 'fa-spin': update_running }" ng-show = "update_running"></i>
-            <p>beta code:&nbsp;<input type="text" ng-model="beta_code" maxlength="8"></p>
+            <p>beta code:&nbsp;<input type="text" ng-model="beta_code" maxlength="8"/></p>
             <p>{{update_status_message}}</p>
-            <p>Current software version: <%- include version.txt %></p>
-            <p>Current system version: <%- include system-version.txt %></p>
+            <p>Current software version: {{software_version}}</p>
+            <p>Current system version: {{system_version}}</p>
           </div>
 
         </div>
@@ -41,8 +41,8 @@
       <p>Questions? email support@circuithappy.com</p>
       <p><img src="footer_logo.svg"/></p>
       <ul>Missing Link info:
-        <li>Software version: <%- include version.txt %></li>
-        <li>System version: <%- include system-version.txt %></li>
+        <li>Software version: {{software_version}}</li>
+        <li>System version: {{system_version}}</li>
       </ul>
     </div>
 

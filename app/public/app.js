@@ -28,14 +28,14 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
         $scope.network_passcode          = "";
         $scope.show_passcode_entry_field = false;
         $scope.show_reboot_message       = false;
+        $scope.beta_code                 = "";
+        $scope.system_version            = "";
+        $scope.software_version          = "";
 
         // Scope filter definitions
         $scope.orderScanResults = function(cell) {
             return parseInt(cell.signal_strength);
         }
-
-        $scope.foo = function() { console.log("foo"); }
-        $scope.bar = function() { console.log("bar"); }
 
         // Scope function definitions
         $scope.rescan = function() {
@@ -48,6 +48,15 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
                     $scope.scan_results = response.data.scan_results;
                 }
                 $scope.scan_running = false;
+            });
+        }
+
+        $scope.get_box_info = function() {
+            PiManager.get_box_info().then(function(response) {
+                console.log(response.data);
+                $scope.beta_code = response.data.beta_code;
+                $scope.software_version = response.data.software_version;
+                $scope.system_version = response.data.system_version;
             });
         }
 
@@ -115,8 +124,8 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
           });
         }
 
-        // Defer load the scanned results from the rpi
-        //$scope.rescan();
+        // Defer load the box information
+        $scope.get_box_info();
     }]
 );
 
@@ -138,6 +147,9 @@ app.service("PiManager", ["$http",
             },
             reboot_box: function() {
                 return $http.get("/api/reboot");
+            },
+            get_box_info: function() {
+                return $http.get("/api/box_info");
             }
         };
     }]
