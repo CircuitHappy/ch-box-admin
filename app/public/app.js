@@ -124,7 +124,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
           });
         }
 
-        // Defer load the box information
+        // Get any information about Missing Link box stored server side
         $scope.get_box_info();
     }]
 );

@@ -2,7 +2,7 @@
 <html lang="en" ng-app="RpiWifiConfig">
 
 <head>
-    <title>Missing Link: Add WiFi Access Point</title>
+    <title>Missing Link: Add WiFi Network</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=1">
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -17,7 +17,7 @@
       ng-keyup      = "$event.keyCode == 27 ? change_selection(null) : ''">
 
     <div class = "page-header" data-ng-init = "rescan()">
-        <i class = "fa fa-wifi"></i> Add a Wifi Network
+      THE MISSING LINK Editor
         <a href = "#" ng-click = "rescan()" ng-class = "{ 'active': scan_running }">
             <i class = "fa fa-refresh"
                ng-class = "{ 'fa-spin': scan_running }"></i>
@@ -27,7 +27,7 @@
     <div class = "page-content">
         <div class="menu-bar"><p>&lt;&lt; <a href="/">Main Menu</a></p></div>
         <div class = "scan-results-container">
-
+          <h1><i class = "fa fa-wifi"></i> Add a WiFi Network</h1>
             <div class = "scan-result"
                  ng-repeat = "cell in scan_results | orderBy:orderScanResults:true"
                  ng-class = "{ selected: (cell.address == selected_cell.address) }"
@@ -53,8 +53,8 @@
       <p>Questions? email support@circuithappy.com</p>
       <p><img src="footer_logo.svg"/></p>
       <ul>System Information:
-        <li>Software version: {{software_version}}</li>
-        <li>System version: {{system_version}}</li>
+        <li>Software: {{software_version}}</li>
+        <li>System: {{system_version}}</li>
       </ul>
     </div>
 

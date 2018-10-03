@@ -9,7 +9,8 @@
 
 html, body {
     margin: 0; padding: 0;
-    font-family: "Roboto", "PT Sans", sans-serif;
+    font-family: "Helvetica Neue", "Franklin Gothic Medium", "PT Sans", sans-serif;
+    text-align: center;
     position: relative;
 }
 
@@ -18,13 +19,19 @@ html, body {
     height: 50px; line-height: 50px;
     color: white;
 
-    font-size: 20pt;
+    font-size: 18pt;
+    font-weight: 400;
     text-align: center;
 
     -webkit-user-select: none;
 
     background: linear-gradient(to bottom right, var(--ch-orange), var(--ch-pink));
     border-bottom: 2px solid #ffffff;
+}
+
+h1 {
+    font-weight: 200;
+    font-size: 20pt;
 }
 .page-header a {
     position: absolute;
@@ -59,6 +66,7 @@ html, body {
 
 .page-content {
     width: 100%;
+    text-align: center;
     /*height: calc(100% - 136px);*/
     padding: 0;
 }
@@ -71,27 +79,35 @@ img.rebooting {
 }
 
 .page-footer {
+  display: inline-block;
   color: black;
-  text-align: center;
   margin: 0 auto;
-  width: 24em;
+  margin-top: 2em;
+  width: 20em;
 }
 
 .page-footer ul {
+  font-size: 10pt;
   text-align: left;
   list-style: none;
   width: 12em;
-  margin: auto;
+  margin: 2em 0;
+  margin-left: 6em;
   padding: 0;
 }
 
+.page-footer li {
+  padding-top: 0.25em;
+}
 
 .page-footer img {
   float: left;
   width:5em;
+  padding: 0 1em;
 }
 
 .scan-results-container {
+    text-align: left;
     margin: 0 auto;
     margin-bottom: 10px;
 
@@ -144,18 +160,20 @@ img.rebooting {
 }
 
 .updater-content {
+  text-align: justify;
   margin: 0 auto;
-  margin-bottom: 10px;
-  padding: 1em;
+  padding: 0 1em;
   max-width: 400px;
   border-bottom: 2px solid white;
 }
 
 .updater_button {
-    padding: 1em;
-    text-align: center;
+    display: inline-block;
+    width: 16em;
+    text-align: left;
 }
 .updater_button button {
+    width: 16em;
     border: 2px solid var(--ch-pink-dark);
     background: var(--ch-pink);
     color: white;
@@ -175,8 +193,21 @@ img.rebooting {
     border: 2px solid var(--ch-pink-dark);
 }
 
+p.beta-code {
+  color: var(--ch-pink-dark);
+  text-align: right;
+}
+
+p.beta-code input {
+  width: 6em;
+  border-style: dotted;
+  border-width: 1px;
+  border-color: var(--ch-pink-dark)
+}
+
 .menu-bar {
-  margin: 1em;
+  text-align: left;
+  margin:  1em;
 }
 
 /*
