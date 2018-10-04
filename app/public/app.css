@@ -8,10 +8,20 @@
 }
 
 html, body {
+    color: var(--ch-black);
     margin: 0; padding: 0;
     font-family: "Helvetica Neue", "Franklin Gothic Medium", "PT Sans", sans-serif;
+    line-height: 170%;
     text-align: center;
     position: relative;
+}
+
+a {
+  color: var(--ch-pink-dark);
+}
+
+a:hover {
+  color: var(--ch-pink);
 }
 
 .page-header {
@@ -80,7 +90,7 @@ img.rebooting {
 
 .page-footer {
   display: inline-block;
-  color: black;
+  line-height: 120%;
   margin: 0 auto;
   margin-top: 2em;
   width: 20em;
@@ -160,17 +170,21 @@ img.rebooting {
 }
 
 .updater-content {
-  text-align: justify;
+  text-align: left;
   margin: 0 auto;
   padding: 0 1em;
   max-width: 400px;
-  border-bottom: 2px solid white;
 }
 
 .updater_button {
+    border-style: dotted;
+    border-width: thin;
+    border-color: var(--ch-black);
     display: inline-block;
-    width: 16em;
+    margin: 0 auto;
+    padding: 1em 4.25em;
     text-align: left;
+    line-height: 140%;
 }
 .updater_button button {
     width: 16em;
@@ -209,67 +223,6 @@ p.beta-code input {
   text-align: left;
   margin:  1em;
 }
-
-/*
-
-.password_input {
-    margin: 0 auto;
-
-    width: 80%; max-width: 300px;
-    height: 45px;
-
-    background: #f0f9fe;
-
-    -webkit-transition: all 0.3s ease;
-    -moz-transition:    all 0.3s ease;
-    -ms-transition:     all 0.3s ease;
-    -o-transition:      all 0.3s ease;
-    transition:         all 0.3s ease;
-
-    overflow: hidden;
-}
-
-.password_input.hidden {
-    height: 0px;
-}
-
-.password_input input {
-    width: 98%;
-    height: 87%;
-    line-height: 134%;
-
-    font-size: 17pt;
-}
-
-.submit_btn {
-    margin: 0 auto;
-
-    width: 80%; max-width: 300px;
-    height: 45px; line-height: 45px;
-
-    background: #222222;
-    color: white;
-    cursor: pointer;
-
-    font-size: 18pt;
-    text-align: center;
-
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-
-    -webkit-transition: all 0.3s ease;
-    -moz-transition:    all 0.3s ease;
-    -ms-transition:     all 0.3s ease;
-    -o-transition:      all 0.3s ease;
-    transition:         all 0.3s ease;
-}
-
-.submit_btn:hover {
-    background: #28e602;
-    color: black;
-}
-*/
-
 
 .rwc-password-entry-container {
     position: absolute;
@@ -365,6 +318,7 @@ ul.main-menu li {
   margin: 1em;
   padding: 3em;
   border: solid 1px var(--ch-black);
+  border-style: dotted;
   list-style-position:inside;
 }
 ul.main-menu img {

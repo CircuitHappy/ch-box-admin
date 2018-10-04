@@ -94,7 +94,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
           PiManager.update_software(updater_info).then(function(response) {
             console.log(response.data);
             if (response.data.status == "SUCCESS") {
-              $scope.update_status_message = "New software installed. Rebooting Missing Link.";
+              $scope.update_status_message = "New software installed. Rebooting your Missing Link.";
               console.log("About to reboot.");
               $scope.rebooting = true;
               PiManager.reboot_box();

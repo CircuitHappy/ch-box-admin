@@ -30,10 +30,10 @@
         </div>
         <div class="updater_button">
           <p class="beta-code">beta code:&nbsp;<input type="text" ng-model="beta_code" maxlength="8"/></p>
-          <button ng-click="get_software()" ng-disabled="update_running">Check For and Install Update</button> <i class = "fa fa-refresh" ng-class = "{ 'fa-spin': update_running }" ng-show = "update_running"></i>
-          <p>{{update_status_message}}</p>
-          <p>Current software version: {{software_version}}</p>
-          <p>Current system version: {{system_version}}</p>
+          <button ng-click="get_software()" ng-disabled="update_running">Check For and Install Update <i class = "fa fa-refresh" ng-class = "{ 'fa-spin': update_running }" ng-show = "update_running"></i></button>
+          <p><strong>{{update_status_message}}</strong></p>
+          <p>Current software version: {{software_version}}<br/>
+            Current system version: {{system_version}}</p>
         </div>
 
     </div>
