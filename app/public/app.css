@@ -181,6 +181,7 @@ img.rebooting {
     border-width: thin;
     border-color: var(--ch-black);
     display: inline-block;
+    max-width: 400px;
     margin: 0 auto;
     padding: 1em 4.25em;
     text-align: left;
