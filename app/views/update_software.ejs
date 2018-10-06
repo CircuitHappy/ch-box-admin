@@ -17,27 +17,34 @@
       ng-keyup      = "$event.keyCode == 27 ? change_selection(null) : ''">
 
     <div class = "page-header">
-        Update Software
+      THE MISSING LINK Control Panel
     </div>
 
     <div class = "page-content">
         <div class="menu-bar"><p>&lt;&lt; <a href="/">Main Menu</a></p></div>
         <div class = "updater-content">
-          <p>Click the button below to check the Circuit Happy servers for a software update.</p>
-          <p>If there is an update available it will install automatically. <em>You will need an Internet connection to get updates.</em></p>
+          <h1>Software Update</h1>
+          <p>Click the button below to check the Circuit Happy servers for a software update. If there is an update available it will install the update right away.</p>
+          <p><em>You will need an Internet connection to get updates.</em></p>
           <p>Your Missing Link will reboot after a successful update.</p>
-          <div class="updater_button">
-            <button ng-click="get_software()" ng-disabled="update_running">Check For and Install Update</button> <i class = "fa fa-refresh" ng-class = "{ 'fa-spin': update_running }" ng-show = "update_running"></i>
-            <p>{{update_status_message}}</p>
-            <p>Current software version: <%- include version.txt %></p>
-          </div>
-
         </div>
+        <div class="updater_button">
+          <p class="beta-code">beta code:&nbsp;<input type="text" ng-model="beta_code" maxlength="8"/></p>
+          <button ng-click="get_software()" ng-disabled="update_running">Check For and Install Update <i class = "fa fa-refresh" ng-class = "{ 'fa-spin': update_running }" ng-show = "update_running"></i></button>
+          <p><strong>{{update_status_message}}</strong></p>
+          <p>Current software version: {{software_version}}<br/>
+            Current system version: {{system_version}}</p>
+        </div>
+
     </div>
 
     <div class = "page-footer">
+      <p>Questions? email support@circuithappy.com</p>
       <p><img src="footer_logo.svg"/></p>
-      <p>Missing Link software version: <%- include version.txt %></p>
+      <ul>System Information:
+        <li>Software: {{software_version}}</li>
+        <li>System: {{system_version}}</li>
+      </ul>
     </div>
 
     <!-- Scripts load last -->

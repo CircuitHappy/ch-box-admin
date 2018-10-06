@@ -17,10 +17,11 @@
       ng-keyup      = "$event.keyCode == 27 ? change_selection(null) : ''">
 
     <div class = "page-header">
-        Missing Link Administration Page
+      THE MISSING LINK Control Panel
     </div>
 
     <div class = "page-content">
+      <h1>Main Menu</h1>
             <ul class="main-menu">
               <li onclick="location.href='add_wifi.html';" style="cursor: pointer;"><a href="add_wifi.html"><img src="add_wifi.svg"/><br>Add a WiFi Network</a></li>
               <li onclick="location.href='update_software.html';" style="cursor: pointer;"><a href="update_software.html"><img src="software_update.svg"/><br>Update Missing Link Software</a></li>
@@ -28,8 +29,12 @@
     </div>
 
     <div class = "page-footer">
-      <img src="footer_logo.svg"/>
-      <p>Missing Link software version: <%- include version.txt %></p>
+      <p>Questions? email support@circuithappy.com</p>
+      <p><img src="footer_logo.svg"/></p>
+      <ul>System Information:
+        <li>Software: {{software_version}}</li>
+        <li>System: {{system_version}}</li>
+      </ul>
     </div>
 
     <!-- Scripts load last -->

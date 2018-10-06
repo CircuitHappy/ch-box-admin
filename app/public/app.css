@@ -8,9 +8,20 @@
 }
 
 html, body {
+    color: var(--ch-black);
     margin: 0; padding: 0;
-    font-family: "Roboto", "PT Sans", sans-serif;
+    font-family: "Helvetica Neue", "Franklin Gothic Medium", "PT Sans", sans-serif;
+    line-height: 170%;
+    text-align: center;
     position: relative;
+}
+
+a {
+  color: var(--ch-pink-dark);
+}
+
+a:hover {
+  color: var(--ch-pink);
 }
 
 .page-header {
@@ -18,13 +29,19 @@ html, body {
     height: 50px; line-height: 50px;
     color: white;
 
-    font-size: 20pt;
+    font-size: 18pt;
+    font-weight: 400;
     text-align: center;
 
     -webkit-user-select: none;
 
     background: linear-gradient(to bottom right, var(--ch-orange), var(--ch-pink));
     border-bottom: 2px solid #ffffff;
+}
+
+h1 {
+    font-weight: 200;
+    font-size: 20pt;
 }
 .page-header a {
     position: absolute;
@@ -59,6 +76,7 @@ html, body {
 
 .page-content {
     width: 100%;
+    text-align: center;
     /*height: calc(100% - 136px);*/
     padding: 0;
 }
@@ -71,16 +89,35 @@ img.rebooting {
 }
 
 .page-footer {
-  width: 100%;
-  color: black;
-  text-align: center;
+  display: inline-block;
+  line-height: 120%;
+  margin: 0 auto;
+  margin-top: 2em;
+  width: 20em;
+}
+
+.page-footer ul {
+  font-size: 10pt;
+  text-align: left;
+  list-style: none;
+  width: 12em;
+  margin: 2em 0;
+  margin-left: 6em;
+  padding: 0;
+}
+
+.page-footer li {
+  padding-top: 0.25em;
 }
 
 .page-footer img {
+  float: left;
   width:5em;
+  padding: 0 1em;
 }
 
 .scan-results-container {
+    text-align: left;
     margin: 0 auto;
     margin-bottom: 10px;
 
@@ -133,18 +170,25 @@ img.rebooting {
 }
 
 .updater-content {
+  text-align: left;
   margin: 0 auto;
-  margin-bottom: 10px;
-  padding: 1em;
+  padding: 0 1em;
   max-width: 400px;
-  border-bottom: 2px solid white;
 }
 
 .updater_button {
-    padding: 1em;
-    text-align: center;
+    border-style: dotted;
+    border-width: thin;
+    border-color: var(--ch-black);
+    display: inline-block;
+    max-width: 16em;
+    margin: 0 auto;
+    padding: 1em 4.25em;
+    text-align: left;
+    line-height: 140%;
 }
 .updater_button button {
+    width: 16em;
     border: 2px solid var(--ch-pink-dark);
     background: var(--ch-pink);
     color: white;
@@ -164,70 +208,22 @@ img.rebooting {
     border: 2px solid var(--ch-pink-dark);
 }
 
+p.beta-code {
+  color: var(--ch-pink-dark);
+  text-align: right;
+}
+
+p.beta-code input {
+  width: 6em;
+  border-style: dotted;
+  border-width: 1px;
+  border-color: var(--ch-pink-dark)
+}
+
 .menu-bar {
-  margin: 1em;
+  text-align: left;
+  margin:  1em;
 }
-
-/*
-
-.password_input {
-    margin: 0 auto;
-
-    width: 80%; max-width: 300px;
-    height: 45px;
-
-    background: #f0f9fe;
-
-    -webkit-transition: all 0.3s ease;
-    -moz-transition:    all 0.3s ease;
-    -ms-transition:     all 0.3s ease;
-    -o-transition:      all 0.3s ease;
-    transition:         all 0.3s ease;
-
-    overflow: hidden;
-}
-
-.password_input.hidden {
-    height: 0px;
-}
-
-.password_input input {
-    width: 98%;
-    height: 87%;
-    line-height: 134%;
-
-    font-size: 17pt;
-}
-
-.submit_btn {
-    margin: 0 auto;
-
-    width: 80%; max-width: 300px;
-    height: 45px; line-height: 45px;
-
-    background: #222222;
-    color: white;
-    cursor: pointer;
-
-    font-size: 18pt;
-    text-align: center;
-
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-
-    -webkit-transition: all 0.3s ease;
-    -moz-transition:    all 0.3s ease;
-    -ms-transition:     all 0.3s ease;
-    -o-transition:      all 0.3s ease;
-    transition:         all 0.3s ease;
-}
-
-.submit_btn:hover {
-    background: #28e602;
-    color: black;
-}
-*/
-
 
 .rwc-password-entry-container {
     position: absolute;
@@ -323,8 +319,46 @@ ul.main-menu li {
   margin: 1em;
   padding: 3em;
   border: solid 1px var(--ch-black);
+  border-style: dotted;
   list-style-position:inside;
 }
 ul.main-menu img {
   width: 10em;
+}
+
+.reboot-message-container {
+    color: white;
+    position: absolute;
+
+    top: 0; left: 0;
+    width: 95%; height: 100%;
+    min-height: 40em;
+    padding: 2em;
+    margin: 0 auto;
+
+    background: rgba(19,0,27,1.0);
+
+    -webkit-transition: all 0.3s ease;
+    -moz-transition:    all 0.3s ease;
+    -ms-transition:     all 0.3s ease;
+    -o-transition:      all 0.3s ease;
+    transition:         all 0.3s ease;
+}
+
+.reboot-message {
+  text-align: left;
+  width: 20em;
+  margin: 0 auto;
+}
+.reboot-message img {
+  width:auto;
+}
+
+p.reboot-footer {
+  text-align: center;
+}
+
+img.reboot-footer {
+  padding-top: 1em;
+  width: 4em;
 }

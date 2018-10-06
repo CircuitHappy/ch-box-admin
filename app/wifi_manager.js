@@ -2,7 +2,12 @@ var _             = require("underscore")._,
     async         = require("async"),
     fs            = require("fs"),
     exec          = require("child_process").exec,
-    config        = require("../config.json");
+    config        = require("../config.json"),
+    box_info      = {
+      software_version:   "unknown",
+      system_version:     "unknown",
+      beta_code:          ""
+    };
 
 // Better template format
 _.templateSettings = {
@@ -277,11 +282,12 @@ module.exports = function() {
               function write_boot_status_and_wait_to_reboot(next_step) {
                   _write_wifi_status("REBOOT");
                   setTimeout( function () {
-                    exec("shutdown -r now", function(error, stdout, stderr) {
+                    exec("sync;sync;sync;sleep 1;shutdown -r now", function(error, stdout, stderr) {
+                    //exec("shutdown -r now", function(error, stdout, stderr) {
                         console.log(stdout);
                         if (!error) console.log("... rebooting");
                     });
-                  }, 2000);
+                  }, 1000);
                   next_step();
               },
 
@@ -289,24 +295,49 @@ module.exports = function() {
     };
 
     // copy /ch/version.txt to .app/views for easier reading of the version file.
-    _update_version_file = function(callback) {
+    _load_box_info = function(callback) {
 
           async.series([
+
               function get_software_version(next_step) {
-                  exec("cp /ch/version.txt /ch/current/www/ch-box-admin/app/views/", function(error, stdout, stderr) {
-                      if (error) {
-                        console.log("cannot copy: " + error);
-                        exec("sh -c \'echo unknown > /ch/current/www/ch-box-admin/app/views/version.txt\'", function(error, stdout, stderr) {
-                          if (error) console.log("cannot write file: " + error);
-                        });
-                      }
+                if (fs.existsSync('/ch/version.txt', 'utf8')) {
+                  fs.readFile('/ch/version.txt', (err, data) => {
+                    if (err) throw err;
+                      box_info.software_version = data.toString().replace(/\r?\n|\r/g, "");
+                      console.log("software_version: " + box_info.software_version);
+                      next_step();
                   });
-                  next_step();
+                }
+              },
+
+              function get_system_version(next_step) {
+                if (fs.existsSync('/ch/system-version.txt', 'utf8')) {
+                  fs.readFile('/ch/system-version.txt', (err, data) => {
+                    if (err) throw err;
+                      box_info.system_version = data.toString().replace(/\r?\n|\r/g, "");
+                      console.log("system_version: " + box_info.system_version);
+                      next_step();
+                  });
+                }
+              },
+
+              function get_beta_code(next_step) {
+                if (fs.existsSync('/ch/beta_code.txt', 'utf8')) {
+                  fs.readFile('/ch/beta_code.txt', (err, data) => {
+                    if (err) throw err;
+                      box_info.beta_code = data.toString().replace(/\r?\n|\r/g, "");
+                      console.log("beta_code: " + box_info.beta_code);
+                      next_step();
+                  });
+                }
               },
 
           ], callback);
     };
 
+    _get_box_info = function() {
+      return box_info;
+    };
 
     return {
         get_wifi_info:           _get_wifi_info,
@@ -324,6 +355,7 @@ module.exports = function() {
 
         reboot:                  _reboot,
 
-        update_version_file:     _update_version_file
+        load_box_info:           _load_box_info,
+        get_box_info:           _get_box_info
     };
 }

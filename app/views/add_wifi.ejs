@@ -2,7 +2,7 @@
 <html lang="en" ng-app="RpiWifiConfig">
 
 <head>
-    <title>Missing Link: Add WiFi Access Point</title>
+    <title>Missing Link: Add WiFi Network</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=1">
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -17,7 +17,7 @@
       ng-keyup      = "$event.keyCode == 27 ? change_selection(null) : ''">
 
     <div class = "page-header" data-ng-init = "rescan()">
-        <i class = "fa fa-wifi"></i> Add a Wifi Network
+      THE MISSING LINK Control Panel
         <a href = "#" ng-click = "rescan()" ng-class = "{ 'active': scan_running }">
             <i class = "fa fa-refresh"
                ng-class = "{ 'fa-spin': scan_running }"></i>
@@ -27,7 +27,7 @@
     <div class = "page-content">
         <div class="menu-bar"><p>&lt;&lt; <a href="/">Main Menu</a></p></div>
         <div class = "scan-results-container">
-
+          <h1><i class = "fa fa-wifi"></i> Add a WiFi Network</h1>
             <div class = "scan-result"
                  ng-repeat = "cell in scan_results | orderBy:orderScanResults:true"
                  ng-class = "{ selected: (cell.address == selected_cell.address) }"
@@ -40,16 +40,29 @@
         </div>
     </div>
 
+    <div class="reboot-message-container" ng-show="show_reboot_message">
+      <div class="reboot-message">
+        <p><img class="rebooting" src="rebooting_anim.gif"/></p>
+        <p>Settings are being saved and the system is rebooting.</p>
+        <p>Your Missing Link should be back up and running on your network in a minute.</p>
+        <p class="reboot-footer"><a href="/"><img class="reboot-footer" src="small_white_logo.svg"/></a></p>
+      </div>
+    </div>
+
     <div class = "page-footer">
+      <p>Questions? email support@circuithappy.com</p>
       <p><img src="footer_logo.svg"/></p>
-      <p>Missing Link software version: <%- include version.txt %></p>
+      <ul>System Information:
+        <li>Software: {{software_version}}</li>
+        <li>System: {{system_version}}</li>
+      </ul>
     </div>
 
     <rwc-password-entry
         visible     = "show_passcode_entry_field"
         passcode    = "network_passcode"
         reset       = "change_selection()"
-        submit      = "submit_selection();show_boot_screen();reboot();"
+        submit      = "submit_selection()"
         ng-keydown  = "{esc: 'close_password_entry()'}" />
 
     <!-- Scripts load last -->

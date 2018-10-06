@@ -27,14 +27,15 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
         $scope.update_status_message     = "";
         $scope.network_passcode          = "";
         $scope.show_passcode_entry_field = false;
+        $scope.show_reboot_message       = false;
+        $scope.beta_code                 = "";
+        $scope.system_version            = "";
+        $scope.software_version          = "";
 
         // Scope filter definitions
         $scope.orderScanResults = function(cell) {
             return parseInt(cell.signal_strength);
         }
-
-        $scope.foo = function() { console.log("foo"); }
-        $scope.bar = function() { console.log("bar"); }
 
         // Scope function definitions
         $scope.rescan = function() {
@@ -50,12 +51,13 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             });
         }
 
-        $scope.show_boot_screen = function() {
-          window.location = "/reboot.html";
-        }
-
-        $scope.reboot = function() {
-          PiManager.reboot_box();
+        $scope.get_box_info = function() {
+            PiManager.get_box_info().then(function(response) {
+                console.log(response.data);
+                $scope.beta_code = response.data.beta_code;
+                $scope.software_version = response.data.software_version;
+                $scope.system_version = response.data.system_version;
+            });
         }
 
         $scope.change_selection = function(cell) {
@@ -72,27 +74,29 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
                 wifi_passcode:  $scope.network_passcode,
             };
             if (wifi_info["wifi_passcode"].length >= 8 && wifi_info["wifi_passcode"].length <= 63) {
-              PiManager.enable_wifi(wifi_info).then(function(response) {
-                  console.log(response.data);
-                  if (response.data.status == "SUCCESS") {
-                      console.log("AP Enabled - nothing left to do...");
-                      //redirect would be good here on success, but success isn't being echo'd back.
-                  }
-              });
+              PiManager.enable_wifi(wifi_info);
+              console.log("about to set show_reboot_message to true");
+              $scope.show_passcode_entry_field = false;
+              $scope.show_reboot_message = true;
+              PiManager.reboot_box();
             } else {
               alert("WiFi password needs to be between 8 and 63 characters in length.");
             }
-
         }
 
         $scope.get_software = function() {
+          var updater_info = {
+            beta_code: $scope.beta_code,
+          };
+          console.log("beta_code: " + $scope.beta_code);
           $scope.download_status_message = "Downloading update...";
           $scope.update_running = true;
-          PiManager.update_software().then(function(response) {
+          PiManager.update_software(updater_info).then(function(response) {
             console.log(response.data);
             if (response.data.status == "SUCCESS") {
-              $scope.update_status_message = "New software installed. Rebooting Missing Link.";
+              $scope.update_status_message = "New software installed. Rebooting your Missing Link.";
               console.log("About to reboot.");
+              $scope.rebooting = true;
               PiManager.reboot_box();
             } else {
               console.log("error code: " + response.data.error["code"]);
@@ -120,8 +124,8 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
           });
         }
 
-        // Defer load the scanned results from the rpi
-        //$scope.rescan();
+        // Get any information about Missing Link box stored server side
+        $scope.get_box_info();
     }]
 );
 
@@ -138,11 +142,14 @@ app.service("PiManager", ["$http",
             enable_wifi: function(wifi_info) {
                 return $http.post("/api/enable_wifi", wifi_info);
             },
-            update_software: function() {
-                return $http.get("/api/update_software");
+            update_software: function(updater_info) {
+                return $http.post("/api/update_software", updater_info);
             },
             reboot_box: function() {
                 return $http.get("/api/reboot");
+            },
+            get_box_info: function() {
+                return $http.get("/api/box_info");
             }
         };
     }]

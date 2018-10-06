@@ -33,9 +33,9 @@ async.series([
         });
     },
 
-    // web pages are dependent on version.txt being in ./app/views
-    function update_version_txt(next_step) {
-        wifi_manager.update_version_file();
+    // load info stored in text files about installed software, system, beta
+    function load_box_info(next_step) {
+        wifi_manager.load_box_info();
         next_step();
     },
 

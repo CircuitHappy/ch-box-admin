@@ -18,11 +18,12 @@
       ng-keyup      = "$event.keyCode == 27 ? change_selection(null) : ''">
 
     <div class = "page-header">
-        Your Missing Link is rebooting
+      THE MISSING LINK Control Panel
     </div>
 
     <div class = "page-content">
         <div class = "scan-results-container">
+          <h1>Your Missing Link is Rebooting</h1>
             <p><img class="rebooting" src="rebooting_anim.gif"/></p>
             <p>Settings are being saved and the system is rebooting.</p>
             <p>Your Missing Link should be back up and running on your network in a minute.</p>
@@ -30,8 +31,12 @@
     </div>
 
     <div class = "page-footer">
+      <p>Questions? email support@circuithappy.com</p>
       <p><img src="footer_logo.svg"/></p>
-      <p>Missing Link software version: <%- include version.txt %></p>
+      <ul>System Information:
+        <li>Software: {{software_version}}</li>
+        <li>System: {{system_version}}</li>
+      </ul>
     </div>
 
     <!-- Scripts load last -->

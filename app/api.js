@@ -46,7 +46,6 @@ module.exports = function(wifi_manager, callback) {
     });
 
     app.get("/reboot.html", function(request, response) {
-        console.log("got a /reboot.html");
         response.render("reboot");
     });
 
@@ -63,9 +62,12 @@ module.exports = function(wifi_manager, callback) {
         });
     });
 
-    app.get("/api/update_software", function(request, response) {
+    app.post("/api/update_software", function(request, response) {
+      var new_beta_code = request.body.beta_code;
+      if (new_beta_code == undefined) {new_beta_code = "";}
       console.log("Server got /api/update_software");
-      update(function(error, result) {
+      console.log("new_beta_code: " + new_beta_code);
+      update(new_beta_code, function(error, result) {
         log_error_send_success_with(result[0], error, response);
       });
     });
@@ -78,6 +80,11 @@ module.exports = function(wifi_manager, callback) {
           console.log("Reboot got an error: " + error);
         }
       });
+    });
+
+    app.get("/api/box_info", function(request, response) {
+      console.log("Server got /api/box_info");
+      log_error_send_success_with(wifi_manager.get_box_info(), false, response);
     });
 
     app.post("/api/enable_wifi", function(request, response) {
