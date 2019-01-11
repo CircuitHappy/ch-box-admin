@@ -51,6 +51,21 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             });
         }
 
+        // Scope function definitions
+        $scope.rescan_logs = function() {
+            $scope.scan_results = [];
+            $scope.scan_running = true;
+            PiManager.rescan_logs().then(function(response) {
+                console.log(response.data);
+                if (response.data.status == "SUCCESS") {
+                  $scope.syslog = response.data.syslog;
+                  $scope.missing_link_log = response.data.missing_link;
+                  $scope.ch_box_admin_log = response.data.ch_box_admin;
+                }
+                $scope.scan_running = false;
+            });
+        }
+
         $scope.get_box_info = function() {
             PiManager.get_box_info().then(function(response) {
                 console.log(response.data);
@@ -138,6 +153,9 @@ app.service("PiManager", ["$http",
         return {
             rescan_wifi: function() {
                 return $http.get("/api/rescan_wifi");
+            },
+            rescan_logs: function() {
+                return $http.get("/api/rescan_logs");
             },
             enable_wifi: function(wifi_info) {
                 return $http.post("/api/enable_wifi", wifi_info);

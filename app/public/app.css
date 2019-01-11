@@ -169,6 +169,13 @@ img.rebooting {
     width: 10%; height: 100%;
 }
 
+.logs {
+    font-family: monospace;
+    line-height: 1em;
+    text-align: left;
+    margin: 1em;
+}
+
 .updater-content {
   text-align: left;
   margin: 0 auto;
