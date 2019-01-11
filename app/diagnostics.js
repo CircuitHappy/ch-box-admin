@@ -48,7 +48,7 @@ module.exports = function(cmd_options, callback) {
       },
 
       function syslog(next_step) {
-        exec('head -50 /var/log/syslog', function(error, stdout, stderr) {
+        exec('tail -50 /var/log/syslog', function(error, stdout, stderr) {
             if (error) {
                 return callback(error, output)
             }
