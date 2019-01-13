@@ -30,17 +30,17 @@
           <h1>System Logs</h1>
           <h2>Missing Link</h2>
           <div class = "logs"
-               ng-repeat = "line in missing_link_log">
+               ng-repeat = "line in missing_link_log track by $index">
                <p>{{ line }}</p>
           </div>
           <h2>ch-box-admin</h2>
           <div class = "logs"
-               ng-repeat = "line in ch_box_admin_log">
+               ng-repeat = "line in ch_box_admin_log track by $index">
                <p>{{ line }}</p>
           </div>
           <h2>Syslog</h2>
           <div class = "logs"
-               ng-repeat = "line in syslog">
+               ng-repeat = "line in syslog track by $index">
                <p>{{ line }}</p>
           </div>
 

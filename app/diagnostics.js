@@ -18,7 +18,7 @@ module.exports = function(cmd_options, callback) {
     async.series([
 
       function missing_link_status(next_step) {
-        exec('journalctl -u missing-link.service -n 50', function(error, stdout, stderr) {
+        exec('journalctl -u missing-link.service -n 25', function(error, stdout, stderr) {
             if (error) {
                 return callback(error, output)
             }
@@ -26,14 +26,14 @@ module.exports = function(cmd_options, callback) {
             log_scan["missing_link"] = [];
             var lines = stdout.split("\n");
             for (var idx in lines) {
-                log_scan["missing_link"].push(lines[idx].trim());
+                log_scan["missing_link"].push(lines[idx]);
             }
             next_step();
         });
       },
 
       function ch_box_admin_status(next_step) {
-        exec('journalctl -u ch-box-admin.service -n 50', function(error, stdout, stderr) {
+        exec('journalctl -u ch-box-admin.service -n 25', function(error, stdout, stderr) {
             if (error) {
                 return callback(error, output)
             }
@@ -41,14 +41,14 @@ module.exports = function(cmd_options, callback) {
             log_scan["ch_box_admin"] = [];
             var lines = stdout.split("\n");
             for (var idx in lines) {
-                log_scan["ch_box_admin"].push(lines[idx].trim());
+                log_scan["ch_box_admin"].push(lines[idx]);
             }
             next_step();
         });
       },
 
       function syslog(next_step) {
-        exec('tail -50 /var/log/syslog', function(error, stdout, stderr) {
+        exec('tail -100 /var/log/syslog', function(error, stdout, stderr) {
             if (error) {
                 return callback(error, output)
             }
@@ -56,7 +56,7 @@ module.exports = function(cmd_options, callback) {
             log_scan["syslog"] = [];
             var lines = stdout.split("\n");
             for (var idx in lines) {
-              log_scan["syslog"].push(lines[idx].trim());
+              log_scan["syslog"].push(lines[idx]);
 
             }
             next_step();
