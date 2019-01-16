@@ -2,7 +2,7 @@
 <html lang="en" ng-app="RpiWifiConfig">
 
 <head>
-    <title>Missing Link: Update Software</title>
+    <title>Missing Link: Diagnostics</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=1">
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -16,25 +16,34 @@
 <body ng-controller = "AppController"
       ng-keyup      = "$event.keyCode == 27 ? change_selection(null) : ''">
 
-    <div class = "page-header">
+    <div class = "page-header" data-ng-init = "rescan_logs()">
       THE MISSING LINK Control Panel
+        <a href = "#" ng-click = "rescan_logs()" ng-class = "{ 'active': scan_running }">
+            <i class = "fa fa-refresh"
+               ng-class = "{ 'fa-spin': scan_running }"></i>
+        </a>
     </div>
 
     <div class = "page-content">
         <div class="menu-bar"><p>&lt;&lt; <a href="/">Main Menu</a></p></div>
-        <div class = "updater-content">
-          <h1>Software Update</h1>
-          <p>Click the button below to check the Circuit Happy servers for a software update. If there is an update available it will install the update right away.</p>
-          <p><em>You will need an Internet connection to get updates.</em></p>
-          <p>Your Missing Link will reboot after a successful update.</p>
-        </div>
-        <div class="updater_button">
-          <p class="beta-code">beta code:&nbsp;<input type="text" ng-model="beta_code" maxlength="8"/></p>
-          <button ng-click="get_software()" ng-disabled="update_running">Check For and Install Update <i class = "fa fa-refresh" ng-class = "{ 'fa-spin': update_running }" ng-show = "update_running"></i></button>
-          <p><strong>{{update_status_message}}</strong></p>
-          <p>Current software version: {{software_version}}<br/>
-            Current system version: {{system_version}}</p>
-        </div>
+
+          <h1>System Logs</h1>
+          <h2>Missing Link</h2>
+          <div class = "logs"
+               ng-repeat = "line in missing_link_log track by $index">
+               <p>{{ line }}</p>
+          </div>
+          <h2>ch-box-admin</h2>
+          <div class = "logs"
+               ng-repeat = "line in ch_box_admin_log track by $index">
+               <p>{{ line }}</p>
+          </div>
+          <h2>Syslog</h2>
+          <div class = "logs"
+               ng-repeat = "line in syslog track by $index">
+               <p>{{ line }}</p>
+          </div>
+
 
     </div>
 

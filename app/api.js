@@ -1,11 +1,12 @@
-var path       = require("path"),
-    util       = require("util"),
-    iwlist     = require("./iwlist"),
-    update     = require("./software_updater"),
-    express    = require("express"),
-    bodyParser = require('body-parser'),
-    config     = require("../config.json"),
-    http_test  = config.http_test_only;
+var path         = require("path"),
+    util         = require("util"),
+    iwlist       = require("./iwlist"),
+    diagnostics  = require("./diagnostics"),
+    update       = require("./software_updater"),
+    express      = require("express"),
+    bodyParser   = require('body-parser'),
+    config       = require("../config.json"),
+    http_test    = config.http_test_only;
 
 // Helper function to log errors and send a generic status "SUCCESS"
 // message to the caller
@@ -45,6 +46,10 @@ module.exports = function(wifi_manager, callback) {
         response.render("add_wifi");
     });
 
+    app.get("/diagnostics.html", function(request, response) {
+        response.render("diagnostics");
+    });
+
     app.get("/reboot.html", function(request, response) {
         response.render("reboot");
     });
@@ -58,6 +63,13 @@ module.exports = function(wifi_manager, callback) {
     app.get("/api/rescan_wifi", function(request, response) {
         console.log("Server got /rescan_wifi");
         iwlist(function(error, result) {
+            log_error_send_success_with(result[0], error, response);
+        });
+    });
+
+    app.get("/api/rescan_logs", function(request, response) {
+        console.log("Server got /rescan_logs");
+        diagnostics(function(error, result) {
             log_error_send_success_with(result[0], error, response);
         });
     });
