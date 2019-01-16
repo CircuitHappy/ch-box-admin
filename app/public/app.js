@@ -101,7 +101,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
 
         $scope.get_software = function() {
           var updater_info = {
-            beta_code: $scope.beta_code,
+            beta_code: $scope.beta_code.toLowerCase(),
           };
           console.log("beta_code: " + $scope.beta_code);
           $scope.download_status_message = "Downloading update...";
