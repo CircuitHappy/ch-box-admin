@@ -52,6 +52,22 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
         }
 
         // Scope function definitions
+        $scope.list_stored_wifi = function() {
+            $scope.scan_results = [];
+            $scope.selected_network = null;
+            $scope.scan_running = true;
+            PiManager.list_stored_wifi().then(function(response) {
+              console.log("response data:");
+                console.log(response.data);
+                if (response.data.status == "SUCCESS") {
+                  console.log(response.data.scan_results);
+                    $scope.scan_results = response.data.scan_results;
+                }
+                $scope.scan_running = false;
+            });
+        }
+
+        // Scope function definitions
         $scope.rescan_logs = function() {
             $scope.scan_results = [];
             $scope.scan_running = true;
@@ -153,6 +169,12 @@ app.service("PiManager", ["$http",
         return {
             rescan_wifi: function() {
                 return $http.get("/api/rescan_wifi");
+            },
+            list_stored_wifi: function() {
+                return $http.get("/api/list_stored_wifi");
+            },
+            remove_stored_wifi: function(remove_stored_wifi) {
+                return $http.post("/api/remove_stored_wifi", remove_stored_wifi);
             },
             rescan_logs: function() {
                 return $http.get("/api/rescan_logs");

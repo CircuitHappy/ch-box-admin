@@ -1,12 +1,13 @@
-var path         = require("path"),
-    util         = require("util"),
-    iwlist       = require("./iwlist"),
-    diagnostics  = require("./diagnostics"),
-    update       = require("./software_updater"),
-    express      = require("express"),
-    bodyParser   = require('body-parser'),
-    config       = require("../config.json"),
-    http_test    = config.http_test_only;
+var path                  = require("path"),
+    util                  = require("util"),
+    iwlist                = require("./iwlist"),
+    list_stored_wifi      = require("./list_stored_wifi"),
+    diagnostics           = require("./diagnostics"),
+    update                = require("./software_updater"),
+    express               = require("express"),
+    bodyParser            = require('body-parser'),
+    config                = require("../config.json"),
+    http_test             = config.http_test_only;
 
 // Helper function to log errors and send a generic status "SUCCESS"
 // message to the caller
@@ -15,6 +16,8 @@ function log_error_send_success_with(success_obj, error, response) {
         console.log("ERROR: " + error);
         response.send({ status: "ERROR", error: error });
     } else {
+      console.log("log_error_send_success_with");
+      console.log(success_obj);
         success_obj = success_obj || {};
         success_obj["status"] = "SUCCESS";
         response.send(success_obj);
@@ -46,6 +49,10 @@ module.exports = function(wifi_manager, callback) {
         response.render("add_wifi");
     });
 
+    app.get("/edit_wifi.html", function(request, response) {
+        response.render("edit_wifi");
+    });
+
     app.get("/diagnostics.html", function(request, response) {
         response.render("diagnostics");
     });
@@ -64,6 +71,13 @@ module.exports = function(wifi_manager, callback) {
         console.log("Server got /rescan_wifi");
         iwlist(function(error, result) {
             log_error_send_success_with(result[0], error, response);
+        });
+    });
+
+    app.get("/api/list_stored_wifi", function(request, response) {
+        console.log("Server got /list_stored_wifi");
+        list_stored_wifi(function(error, result) {
+            log_error_send_success_with(result, error, response);
         });
     });
 
