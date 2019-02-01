@@ -16,8 +16,6 @@ function log_error_send_success_with(success_obj, error, response) {
         console.log("ERROR: " + error);
         response.send({ status: "ERROR", error: error });
     } else {
-      console.log("log_error_send_success_with");
-      console.log(success_obj);
         success_obj = success_obj || {};
         success_obj["status"] = "SUCCESS";
         response.send(success_obj);

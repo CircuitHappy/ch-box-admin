@@ -43,7 +43,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             $scope.selected_cell = null;
             $scope.scan_running = true;
             PiManager.rescan_wifi().then(function(response) {
-                console.log(response.data);
                 if (response.data.status == "SUCCESS") {
                     $scope.scan_results = response.data.scan_results;
                 }
@@ -57,8 +56,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             $scope.selected_network = null;
             $scope.scan_running = true;
             PiManager.list_stored_wifi().then(function(response) {
-              console.log("response data:");
-                console.log(response.data);
                 if (response.data.status == "SUCCESS") {
                   console.log(response.data.scan_results);
                     $scope.scan_results = response.data.scan_results;
@@ -72,7 +69,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             $scope.scan_results = [];
             $scope.scan_running = true;
             PiManager.rescan_logs().then(function(response) {
-                console.log(response.data);
                 if (response.data.status == "SUCCESS") {
                   $scope.syslog = response.data.syslog;
                   $scope.missing_link_log = response.data.missing_link;
@@ -84,7 +80,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
 
         $scope.get_box_info = function() {
             PiManager.get_box_info().then(function(response) {
-                console.log(response.data);
                 $scope.beta_code = response.data.beta_code;
                 $scope.software_version = response.data.software_version;
                 $scope.system_version = response.data.system_version;
@@ -106,7 +101,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             };
             if (wifi_info["wifi_passcode"].length >= 8 && wifi_info["wifi_passcode"].length <= 63) {
               PiManager.enable_wifi(wifi_info);
-              console.log("about to set show_reboot_message to true");
               $scope.show_passcode_entry_field = false;
               $scope.show_reboot_message = true;
               PiManager.reboot_box();
@@ -123,7 +117,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
           $scope.download_status_message = "Downloading update...";
           $scope.update_running = true;
           PiManager.update_software(updater_info).then(function(response) {
-            console.log(response.data);
             if (response.data.status == "SUCCESS") {
               $scope.update_status_message = "New software installed. Rebooting your Missing Link.";
               console.log("About to reboot.");
@@ -159,7 +152,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
           console.log("network_id: " + network_id);
           $scope.update_running = true;
           PiManager.remove_stored_wifi(network_id).then(function(response) {
-            console.log(response.data);
             if (response.data.status == "SUCCESS") {
               console.log("Network removed.");
             } else {
@@ -171,8 +163,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
           $scope.selected_network = null;
           $scope.scan_running = true;
           PiManager.list_stored_wifi().then(function(response) {
-            console.log("response data:");
-              console.log(response.data);
               if (response.data.status == "SUCCESS") {
                 console.log(response.data.scan_results);
                   $scope.scan_results = response.data.scan_results;
@@ -183,7 +173,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
 
       $scope.update_stored_networks = function() {
         PiManager.update_stored_wifi().then(function(response) {
-          console.log(response.data);
           if (response.data.status == "SUCCESS") {
             $scope.update_status_message = "Saved Stored Networks. Rebooting your Missing Link.";
             console.log("About to reboot.");
