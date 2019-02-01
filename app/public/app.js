@@ -155,6 +155,45 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
           });
         }
 
+        $scope.remove_network = function(network_id) {
+          console.log("network_id: " + network_id);
+          $scope.update_running = true;
+          PiManager.remove_stored_wifi(network_id).then(function(response) {
+            console.log(response.data);
+            if (response.data.status == "SUCCESS") {
+              console.log("Network removed.");
+            } else {
+              console.log("error removing network: " + response.data.error);
+            }
+            $scope.update_running = false;
+          });
+          $scope.scan_results = [];
+          $scope.selected_network = null;
+          $scope.scan_running = true;
+          PiManager.list_stored_wifi().then(function(response) {
+            console.log("response data:");
+              console.log(response.data);
+              if (response.data.status == "SUCCESS") {
+                console.log(response.data.scan_results);
+                  $scope.scan_results = response.data.scan_results;
+              }
+              $scope.scan_running = false;
+          });
+      }
+
+      $scope.update_stored_networks = function() {
+        PiManager.update_stored_wifi().then(function(response) {
+          console.log(response.data);
+          if (response.data.status == "SUCCESS") {
+            $scope.update_status_message = "Saved Stored Networks. Rebooting your Missing Link.";
+            console.log("About to reboot.");
+            $scope.rebooting = true;
+            $scope.show_reboot_message = true;
+            PiManager.reboot_box();
+          }
+        });
+      }
+
         // Get any information about Missing Link box stored server side
         $scope.get_box_info();
     }]
@@ -173,8 +212,11 @@ app.service("PiManager", ["$http",
             list_stored_wifi: function() {
                 return $http.get("/api/list_stored_wifi");
             },
-            remove_stored_wifi: function(remove_stored_wifi) {
-                return $http.post("/api/remove_stored_wifi", remove_stored_wifi);
+            remove_stored_wifi: function(network_id) {
+                return $http.post("/api/remove_stored_wifi", {id: network_id});
+            },
+            update_stored_wifi: function() {
+                return $http.get("/api/update_stored_wifi");
             },
             rescan_logs: function() {
                 return $http.get("/api/rescan_logs");

@@ -107,7 +107,7 @@ module.exports = function() {
             return console.log(err);
           }
         });
-    }
+    },
 
     // Wifi related functions
     _is_wifi_enabled_sync = function(info) {
@@ -273,7 +273,7 @@ module.exports = function() {
             ], callback);
         });
 
-    };
+    },
 
     // Reboots the box
     _reboot = function(callback) {
@@ -292,7 +292,7 @@ module.exports = function() {
               },
 
           ], callback);
-    };
+    },
 
     // copy /ch/version.txt to .app/views for easier reading of the version file.
     _load_box_info = function(callback) {
@@ -333,7 +333,7 @@ module.exports = function() {
               },
 
           ], callback);
-    };
+    },
 
     _get_box_info = function() {
       return box_info;
