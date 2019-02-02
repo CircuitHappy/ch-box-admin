@@ -1,4 +1,5 @@
-var exec    = require("child_process").exec;
+var exec    = require("child_process").exec,
+    async   = require("async");
 
 /*****************************************************************************\
     Return a function which is responsible for using "wpa_cli list_networks"
@@ -40,7 +41,11 @@ module.exports = function() {
         }
 
         function get_current_ssid(text) {
-          return text.match(/ESSID:\"(.*)\"/)[1];
+          var match_text = text.match(/ESSID:\"(.*)\"/)[1];
+          if (match_text) {
+            return match_text;
+          }
+          return null;
         }
 
         // What SSID are we connected to?
@@ -74,22 +79,20 @@ module.exports = function() {
 
   _remove_network = function (network_id, callback) {
     var cmd;
-    // Handle case where no options are passed in
-    if (typeof(network_id) == "function" && typeof(callback) == "undefined") {
-      network_id = "";
+    console.log("network_id: " + network_id);
+    if (isNaN(network_id)) {
+      console.log("Network ID is Not a Number");
+      return callback(null, "Network ID is Not a Number!");
     }
 
-    console.log("network_id: " + network_id);
-    if (network_id == "") {
-      return callback(null, "Need Network ID!");
-    }
     cmd = "wpa_cli remove_network " + network_id;
     console.log("cmd: " + cmd);
     exec(cmd, function(error, stdout, stderr) {
-        // Handle errors from running "iwlist scan"
         if (error) {
-            return callback(error, "");
+          console.log("There was an error removing network: " + stderr);
+          return callback(error, "");
         }
+        console.log("removed network? " + stdout);
         return callback(null, "");
     });
   },

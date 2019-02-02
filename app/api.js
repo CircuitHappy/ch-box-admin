@@ -90,7 +90,6 @@ module.exports = function(wifi_manager, callback) {
       var network_id = request.body.id;
       if (network_id == undefined) {network_id = "";}
       console.log("Server got /api/remove_stored_wifi");
-      console.log("network_id: " + network_id);
       edit_wifi.remove_network(network_id, function(error, result) {
         log_error_send_success_with(result[0], error, response);
       });

@@ -28,6 +28,8 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
         $scope.network_passcode          = "";
         $scope.show_passcode_entry_field = false;
         $scope.show_reboot_message       = false;
+        $scope.show_save_message         = false;
+        $scope.no_results                = true;
         $scope.beta_code                 = "";
         $scope.system_version            = "";
         $scope.software_version          = "";
@@ -50,21 +52,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             });
         }
 
-        // Scope function definitions
-        $scope.list_stored_wifi = function() {
-            $scope.scan_results = [];
-            $scope.selected_network = null;
-            $scope.scan_running = true;
-            PiManager.list_stored_wifi().then(function(response) {
-                if (response.data.status == "SUCCESS") {
-                  console.log(response.data.scan_results);
-                    $scope.scan_results = response.data.scan_results;
-                }
-                $scope.scan_running = false;
-            });
-        }
-
-        // Scope function definitions
         $scope.rescan_logs = function() {
             $scope.scan_results = [];
             $scope.scan_running = true;
@@ -148,27 +135,50 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
           });
         }
 
-        $scope.remove_network = function(network_id) {
-          console.log("network_id: " + network_id);
-          $scope.update_running = true;
-          PiManager.remove_stored_wifi(network_id).then(function(response) {
-            if (response.data.status == "SUCCESS") {
-              console.log("Network removed.");
-            } else {
-              console.log("error removing network: " + response.data.error);
-            }
-            $scope.update_running = false;
-          });
-          $scope.scan_results = [];
-          $scope.selected_network = null;
-          $scope.scan_running = true;
+        // Scope function definitions
+        $scope.list_stored_wifi = function() {
+            $scope.scan_results = [];
+            $scope.selected_network = null;
+            $scope.scan_running = true;
+            $scope.no_results = true;
           PiManager.list_stored_wifi().then(function(response) {
               if (response.data.status == "SUCCESS") {
                 console.log(response.data.scan_results);
-                  $scope.scan_results = response.data.scan_results;
+                $scope.scan_results = response.data.scan_results;
+                console.log("num results: " + response.data.scan_results.length);
+                if (response.data.scan_results.length > 0) {
+                  $scope.no_results = false;
+                }
               }
-              $scope.scan_running = false;
+            });
+            $scope.scan_running = false;
+        }
+
+        $scope.remove_network = function(network_id) {
+          console.log("network_id: " + network_id);
+          $scope.scan_results = [];
+          $scope.selected_network = null;
+          $scope.scan_running = true;
+          $scope.no_results = true;
+          PiManager.remove_stored_wifi(parseInt(network_id, 10)).then(function(response) {
+            if (response.data.status == "SUCCESS") {
+              console.log("Network removed.");
+              $scope.show_save_message = true;
+              PiManager.list_stored_wifi().then(function(response) {
+                if (response.data.status == "SUCCESS") {
+                  console.log(response.data.scan_results);
+                  $scope.scan_results = response.data.scan_results;
+                  console.log("num results: " + response.data.scan_results.length);
+                  if (response.data.scan_results.length > 0) {
+                    $scope.no_results = false;
+                  }
+                }
+              });
+            } else {
+              console.log("error removing network: " + response.data.error);
+            }
           });
+          $scope.scan_running = false;
       }
 
       $scope.update_stored_networks = function() {
@@ -201,8 +211,8 @@ app.service("PiManager", ["$http",
             list_stored_wifi: function() {
                 return $http.get("/api/list_stored_wifi");
             },
-            remove_stored_wifi: function(network_id) {
-                return $http.post("/api/remove_stored_wifi", {id: network_id});
+            remove_stored_wifi: function(id) {
+                return $http.post("/api/remove_stored_wifi", {id: id});
             },
             update_stored_wifi: function() {
                 return $http.get("/api/update_stored_wifi");
