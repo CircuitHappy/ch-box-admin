@@ -1,12 +1,13 @@
-var path         = require("path"),
-    util         = require("util"),
-    iwlist       = require("./iwlist"),
-    diagnostics  = require("./diagnostics"),
-    update       = require("./software_updater"),
-    express      = require("express"),
-    bodyParser   = require('body-parser'),
-    config       = require("../config.json"),
-    http_test    = config.http_test_only;
+var path                  = require("path"),
+    util                  = require("util"),
+    iwlist                = require("./iwlist"),
+    edit_wifi             = require("./edit_stored_wifi")(),
+    diagnostics           = require("./diagnostics"),
+    update                = require("./software_updater"),
+    express               = require("express"),
+    bodyParser            = require('body-parser'),
+    config                = require("../config.json"),
+    http_test             = config.http_test_only;
 
 // Helper function to log errors and send a generic status "SUCCESS"
 // message to the caller
@@ -46,6 +47,10 @@ module.exports = function(wifi_manager, callback) {
         response.render("add_wifi");
     });
 
+    app.get("/edit_wifi.html", function(request, response) {
+        response.render("edit_wifi");
+    });
+
     app.get("/diagnostics.html", function(request, response) {
         response.render("diagnostics");
     });
@@ -67,11 +72,36 @@ module.exports = function(wifi_manager, callback) {
         });
     });
 
+    app.post("/api/list_stored_wifi", function(request, response) {
+        var reset_wpa_config = request.body.reset_wpa_config;
+        if (reset_wpa_config == undefined) {reset_wpa_config = false;}
+        console.log("Server got /list_stored_wifi");
+        edit_wifi.list_networks(reset_wpa_config, function(error, result) {
+            log_error_send_success_with(result, error, response);
+        });
+    });
+
     app.get("/api/rescan_logs", function(request, response) {
         console.log("Server got /rescan_logs");
         diagnostics(function(error, result) {
             log_error_send_success_with(result[0], error, response);
         });
+    });
+
+    app.post("/api/remove_stored_wifi", function(request, response) {
+      var network_id = request.body.id;
+      if (network_id == undefined) {network_id = "";}
+      console.log("Server got /api/remove_stored_wifi");
+      edit_wifi.remove_network(network_id, function(error, result) {
+        log_error_send_success_with(result[0], error, response);
+      });
+    });
+
+    app.get("/api/update_stored_wifi", function(request, response) {
+      console.log("Server got /api/update_stored_wifi");
+      edit_wifi.update_stored_networks(function(error, result) {
+        log_error_send_success_with(result[0], error, response);
+      });
     });
 
     app.post("/api/update_software", function(request, response) {

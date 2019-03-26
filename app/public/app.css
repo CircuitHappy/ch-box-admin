@@ -131,6 +131,11 @@ img.rebooting {
     overflow-x: hidden;
 }
 
+.scan-results-container .notes {
+  font-size: 0.85em;
+  padding: 0 10px;
+}
+
 .scan-result {
     color: white;
     position: relative;
@@ -167,6 +172,44 @@ img.rebooting {
     position: absolute;
     top: 0; left: 85%;
     width: 10%; height: 100%;
+}
+
+.scan-result-edit {
+    color: var(--ch-black);
+    position: relative;
+    margin-top: -1px;
+    height: 40px; line-height: 40px;
+    border: thin solid var(--ch-black);
+    padding: 0 10px;
+    background: #ffffff;
+}
+
+.scan-result-edit.selected {
+  color: var(--ch-pink);
+}
+
+.edit-controls {
+  float: right;
+}
+
+.edit-controls button {
+    font-size: 0.85em;
+    border: 2px solid var(--ch-pink-dark);
+    background: var(--ch-pink);
+    color: white;
+    padding: 0.25em 0.25em;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+.edit-controls button:hover {
+    background: var(--ch-orange);
+    border: 2px solid var(--ch-pink);
+    color: var(--ch-pink);
+}
+.edit-controls button:active {
+    color: var(--ch-pink-dark);
+    border: 2px solid var(--ch-pink-dark);
 }
 
 .logs {

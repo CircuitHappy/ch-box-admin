@@ -28,6 +28,8 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
         $scope.network_passcode          = "";
         $scope.show_passcode_entry_field = false;
         $scope.show_reboot_message       = false;
+        $scope.show_save_message         = false;
+        $scope.no_results                = true;
         $scope.beta_code                 = "";
         $scope.system_version            = "";
         $scope.software_version          = "";
@@ -43,7 +45,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             $scope.selected_cell = null;
             $scope.scan_running = true;
             PiManager.rescan_wifi().then(function(response) {
-                console.log(response.data);
                 if (response.data.status == "SUCCESS") {
                     $scope.scan_results = response.data.scan_results;
                 }
@@ -51,12 +52,10 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             });
         }
 
-        // Scope function definitions
         $scope.rescan_logs = function() {
             $scope.scan_results = [];
             $scope.scan_running = true;
             PiManager.rescan_logs().then(function(response) {
-                console.log(response.data);
                 if (response.data.status == "SUCCESS") {
                   $scope.syslog = response.data.syslog;
                   $scope.missing_link_log = response.data.missing_link;
@@ -68,7 +67,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
 
         $scope.get_box_info = function() {
             PiManager.get_box_info().then(function(response) {
-                console.log(response.data);
                 $scope.beta_code = response.data.beta_code;
                 $scope.software_version = response.data.software_version;
                 $scope.system_version = response.data.system_version;
@@ -90,7 +88,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             };
             if (wifi_info["wifi_passcode"].length >= 8 && wifi_info["wifi_passcode"].length <= 63) {
               PiManager.enable_wifi(wifi_info);
-              console.log("about to set show_reboot_message to true");
               $scope.show_passcode_entry_field = false;
               $scope.show_reboot_message = true;
               PiManager.reboot_box();
@@ -107,7 +104,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
           $scope.download_status_message = "Downloading update...";
           $scope.update_running = true;
           PiManager.update_software(updater_info).then(function(response) {
-            console.log(response.data);
             if (response.data.status == "SUCCESS") {
               $scope.update_status_message = "New software installed. Rebooting your Missing Link.";
               console.log("About to reboot.");
@@ -139,6 +135,64 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
           });
         }
 
+        // Scope function definitions
+        $scope.list_stored_wifi = function() {
+            $scope.scan_results = [];
+            $scope.selected_network = null;
+            $scope.scan_running = true;
+            $scope.no_results = true;
+          PiManager.list_stored_wifi(true).then(function(response) {
+              if (response.data.status == "SUCCESS") {
+                console.log(response.data.scan_results);
+                $scope.scan_results = response.data.scan_results;
+                console.log("num results: " + response.data.scan_results.length);
+                if (response.data.scan_results.length > 0) {
+                  $scope.no_results = false;
+                }
+              }
+            });
+            $scope.scan_running = false;
+        }
+
+        $scope.remove_network = function(network_id) {
+          console.log("network_id: " + network_id);
+          $scope.scan_results = [];
+          $scope.selected_network = null;
+          $scope.scan_running = true;
+          $scope.no_results = true;
+          PiManager.remove_stored_wifi(parseInt(network_id, 10)).then(function(response) {
+            if (response.data.status == "SUCCESS") {
+              console.log("Network removed.");
+              $scope.show_save_message = true;
+              PiManager.list_stored_wifi(false).then(function(response) {
+                if (response.data.status == "SUCCESS") {
+                  console.log(response.data.scan_results);
+                  $scope.scan_results = response.data.scan_results;
+                  console.log("num results: " + response.data.scan_results.length);
+                  if (response.data.scan_results.length > 0) {
+                    $scope.no_results = false;
+                  }
+                }
+              });
+            } else {
+              console.log("error removing network: " + response.data.error);
+            }
+          });
+          $scope.scan_running = false;
+      }
+
+      $scope.update_stored_networks = function() {
+        PiManager.update_stored_wifi().then(function(response) {
+          if (response.data.status == "SUCCESS") {
+            $scope.update_status_message = "Saved Stored Networks. Rebooting your Missing Link.";
+            console.log("About to reboot.");
+            $scope.rebooting = true;
+            $scope.show_reboot_message = true;
+            PiManager.reboot_box();
+          }
+        });
+      }
+
         // Get any information about Missing Link box stored server side
         $scope.get_box_info();
     }]
@@ -153,6 +207,15 @@ app.service("PiManager", ["$http",
         return {
             rescan_wifi: function() {
                 return $http.get("/api/rescan_wifi");
+            },
+            list_stored_wifi: function(reset_wpa_config) {
+                return $http.post("/api/list_stored_wifi", {reset_wpa_config: reset_wpa_config});
+            },
+            remove_stored_wifi: function(id) {
+                return $http.post("/api/remove_stored_wifi", {id: id});
+            },
+            update_stored_wifi: function() {
+                return $http.get("/api/update_stored_wifi");
             },
             rescan_logs: function() {
                 return $http.get("/api/rescan_logs");

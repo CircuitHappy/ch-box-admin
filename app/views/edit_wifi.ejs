@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="RpiWifiConfig">
+
+<head>
+    <title>Missing Link: Edit Stored WiFi Networks</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=1">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <link rel="stylesheet" href="/external/font-awesome/css/font-awesome.min.css" >
+    <link rel="stylesheet" href="/app.css">
+</head>
+
+
+<body ng-controller = "AppController"
+      ng-keyup      = "$event.keyCode == 27 ? change_selection(null) : ''">
+
+    <div class = "page-header" data-ng-init = "list_stored_wifi()">
+      THE MISSING LINK Control Panel
+        <a href = "#" ng-click = "list_stored_wifi()" ng-class = "{ 'active': scan_running }">
+            <i class = "fa fa-refresh"
+               ng-class = "{ 'fa-spin': scan_running }"></i>
+        </a>
+    </div>
+
+    <div class = "page-content">
+        <div class="menu-bar"><p>&lt;&lt; <a href="/">Main Menu</a></p></div>
+        <div class = "scan-results-container">
+          <h1><i class = "fa fa-wifi"></i> Edit Stored WiFi Networks</h1>
+            <div class = "scan-result-edit"
+                 ng-repeat = "network in scan_results track by $index"
+                 ng-class = "{ selected: (network.connected) }">
+                <div class = "ssid"><span class="fa fa-play" ng-show="network.connected"></span>  {{ network.ssid }} <div class="edit-controls"><button ng-click="remove_network(network.network_id)"><span class="fa fa-minus-circle"></span> Remove</button></div></div>
+            </div>
+            <div ng-show="no_results"><p>Your Missing Link does not have any stored networks.</p></div>
+            <div class="notes" ng-hide="no_results"><p><span class="fa fa-play"></span> The network you are currently connected to</p></div>
+            <div ng-show="show_save_message" class="updater_button">
+              <p>Press the Save Changes button below to permanently remove the networks.</p>
+              <p><button ng-click="update_stored_networks()">Save Changes & Reboot</button></p>
+              <p>Your Missing Link will automatically reboot after saving changes.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="reboot-message-container" ng-show="show_reboot_message">
+      <div class="reboot-message">
+        <p><img class="rebooting" src="rebooting_anim.gif"/></p>
+        <p>Settings are being saved and the system is rebooting.</p>
+        <p>Your Missing Link should be back up and running on your network in a minute.</p>
+        <p class="reboot-footer"><a href="/"><img class="reboot-footer" src="small_white_logo.svg"/></a></p>
+      </div>
+    </div>
+
+    <div class = "page-footer">
+      <p>Questions? email support@circuithappy.com</p>
+      <p><img src="footer_logo.svg"/></p>
+      <ul>System Information:
+        <li>Software: {{software_version}}</li>
+        <li>System: {{system_version}}</li>
+        <li><a href="diagnostics.html">Diagnostics</a></li>
+      </ul>
+    </div>
+
+    <!-- Scripts load last -->
+    <script src="/external/angularjs/angular.min.js"></script>
+    <script src="/app.js"></script>
+
+</body>
+
+</html>
