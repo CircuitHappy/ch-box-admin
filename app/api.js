@@ -72,9 +72,11 @@ module.exports = function(wifi_manager, callback) {
         });
     });
 
-    app.get("/api/list_stored_wifi", function(request, response) {
+    app.post("/api/list_stored_wifi", function(request, response) {
+        var reset_wpa_config = request.body.reset_wpa_config;
+        if (reset_wpa_config == undefined) {reset_wpa_config = false;}
         console.log("Server got /list_stored_wifi");
-        edit_wifi.list_networks(function(error, result) {
+        edit_wifi.list_networks(reset_wpa_config, function(error, result) {
             log_error_send_success_with(result, error, response);
         });
     });

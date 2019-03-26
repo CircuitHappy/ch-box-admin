@@ -17,6 +17,7 @@ module.exports = function(cmd_options, callback) {
         "signal_strength": /.*Signal level=(\d+)\/100/,
         "encrypted":       /Encryption key:(on)/,
         "open":            /Encryption key:(off)/,
+        "frequency":            /Frequency\"(.*)\"/,
     };
 
     exec("iwlist scan", function(error, stdout, stderr) {

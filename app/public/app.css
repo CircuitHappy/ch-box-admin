@@ -177,6 +177,7 @@ img.rebooting {
 .scan-result-edit {
     color: var(--ch-black);
     position: relative;
+    margin-top: -1px;
     height: 40px; line-height: 40px;
     border: thin solid var(--ch-black);
     padding: 0 10px;

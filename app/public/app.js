@@ -141,7 +141,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             $scope.selected_network = null;
             $scope.scan_running = true;
             $scope.no_results = true;
-          PiManager.list_stored_wifi().then(function(response) {
+          PiManager.list_stored_wifi(true).then(function(response) {
               if (response.data.status == "SUCCESS") {
                 console.log(response.data.scan_results);
                 $scope.scan_results = response.data.scan_results;
@@ -164,7 +164,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             if (response.data.status == "SUCCESS") {
               console.log("Network removed.");
               $scope.show_save_message = true;
-              PiManager.list_stored_wifi().then(function(response) {
+              PiManager.list_stored_wifi(false).then(function(response) {
                 if (response.data.status == "SUCCESS") {
                   console.log(response.data.scan_results);
                   $scope.scan_results = response.data.scan_results;
@@ -208,8 +208,8 @@ app.service("PiManager", ["$http",
             rescan_wifi: function() {
                 return $http.get("/api/rescan_wifi");
             },
-            list_stored_wifi: function() {
-                return $http.get("/api/list_stored_wifi");
+            list_stored_wifi: function(reset_wpa_config) {
+                return $http.post("/api/list_stored_wifi", {reset_wpa_config: reset_wpa_config});
             },
             remove_stored_wifi: function(id) {
                 return $http.post("/api/remove_stored_wifi", {id: id});
