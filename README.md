@@ -125,12 +125,4 @@ sudo systemctl enable ch-box-admin
 
 3. Reboot and Bob’s your uncle
 
-### TO DO:
 
-* Init script to do the following:
-
-    * Do all the above configuring
-
-    * Set /etc/hosts hostname to MissingLink-xyza (where xyza is based on MAC)
-
-    * Set config.json Access Point SSID to same as hostname
