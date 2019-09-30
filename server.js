@@ -2,75 +2,114 @@ var async               = require("async"),
     wifi_manager        = require("./app/wifi_manager")(),
     dependency_manager  = require("./app/dependency_manager")(),
     fs                  = require("fs"),
-    config              = require("./config.json");
-    exec                = require("child_process").exec;
+    config              = require("./config.json"),
+    child               = require("child_process"),
+    exec                = require("child_process").exec,
+    box_info            = {};
 
 /*****************************************************************************\
-    1. Check for dependencies
-    2. Check to see if we are connected to a wifi AP
-    3. If connected to a wifi, do nothing -> exit
-    4. Convert RPI to act as a AP (with a configurable SSID)
-    5. Host a lightweight HTTP server which allows for the user to connect and
-       configure the RPIs wifi connection. The interfaces exposed are RESTy so
-       other applications can similarly implement their own UIs around the
-       data returned.
-    6. Once the RPI is successfully configured, reset it to act as a wifi
-       device (not AP anymore), and setup its wifi network based on what the
-       user picked.
-    7. At this stage, the RPI is named, and has a valid wifi connection which
-       its bound to, reboot the pi and re-run this script on startup.
+    1. load box info
+    2. Get our AP Mode setting
+    3. auto: check if we have wifi IP address, if we don't go in to AP Mode
+       on: immediately go in to AP Mode
+       off: check if we have wifi IP address, if we don't, do do anything
+    4. Start the HTTP server for backend administration.
 \*****************************************************************************/
 async.series([
 
-    // 1. Check if we have the required dependencies installed
-    function test_deps(next_step) {
-        dependency_manager.check_deps({
-            "binaries": ["hostapd", "iw"]
-            //"files":    ["/etc/init.d/isc-dhcp-server"]
-        }, function(error) {
-            if (error) console.log(" * Dependency error, did you run `sudo npm run-script provision`?");
-            next_step(error);
-        });
-    },
-
     // load info stored in text files about installed software, system, beta
     function load_box_info(next_step) {
-        wifi_manager.load_box_info();
-        next_step();
-    },
-
-    //2. Check if wifi is enabled / connected
-    function test_is_wifi_enabled(next_step) {
       wifi_manager.write_wifi_status("TRYING_TO_CONNECT");
-      sleep(5000, function() {
-        console.log("Sleeping for a few seconds to let the network catch up.");
+      wifi_manager.get_box_info(function(err, info) {
+        box_info = info;
+        next_step();
       });
-        wifi_manager.is_wifi_enabled(function(error, result_ip) {
-            if (result_ip) {
-                console.log("\nWifi is enabled, and IP " + result_ip + " assigned");
-                wifi_manager.write_wifi_status("WIFI_CONNECTED");
-            } else {
-                console.log("\nWifi is not enabled, Enabling AP for self-configure");
-                wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
-                    if(error) {
-                        console.log("... AP Enable ERROR: " + error);
-                    } else {
-                        console.log("... AP Enable Success!");
-                        wifi_manager.write_wifi_status("AP_MODE");
-                    }
-                });
-            }
-            next_step(error);
-        });
     },
 
-    // 4. Host HTTP server while functioning as AP, the "api.js"
-    //    file contains all the needed logic to get a basic express
-    //    server up. It uses a small angular application which allows
-    //    us to choose the wifi of our choosing.
+    function load_ap_mode(next_step) {
+      //console.log("Checking AP Mode: " + box_info.ap_mode);
+      switch (box_info.ap_mode) {
+        case "auto" :
+          //console.log("AUTO case...");
+          wifi_manager.write_wifi_status("TRYING_TO_CONNECT");
+          wifi_manager.is_wifi_enabled(function(error, result_ip) {
+              if (result_ip) {
+                  console.log("\nWifi is enabled, and IP " + result_ip + " assigned");
+                  wifi_manager.write_wifi_status("WIFI_CONNECTED");
+              } else {
+                  console.log("\nWifi is not enabled, Enabling AP for self-configure");
+                  wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
+                      if(error) {
+                          console.log("... AP Enable ERROR: " + error);
+                      } else {
+                          console.log("... AP Enable Success!");
+                          wifi_manager.write_wifi_status("AP_MODE");
+                      }
+                  });
+              }
+              next_step();
+          });
+          break;
+
+        case "on" :
+          //console.log("ON case...");
+          wifi_manager.write_wifi_status("TRYING_TO_CONNECT");
+          wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
+              if(error) {
+                  console.log("... AP Enable ERROR: " + error);
+              } else {
+                  console.log("... AP Enable Success!");
+                  wifi_manager.write_wifi_status("AP_MODE");
+              }
+              next_step();
+          });
+          break;
+
+        case "off" :
+          //console.log("OFF case...");
+          wifi_manager.write_wifi_status("TRYING_TO_CONNECT");
+          wifi_manager.is_wifi_enabled(function(error, result_ip) {
+              if (result_ip) {
+                  console.log("\nWifi is enabled, and IP " + result_ip + " assigned");
+                  wifi_manager.write_wifi_status("WIFI_CONNECTED");
+              } else {
+                  console.log("\nNo WiFi network found, AP Mode is OFF.");
+                  wifi_manager.write_wifi_status("NO_WIFI_FOUND");
+              }
+              next_step();
+          });
+          break;
+
+        default :
+          //console.log("default case...");
+          wifi_manager.write_wifi_status("TRYING_TO_CONNECT");
+          wifi_manager.is_wifi_enabled(function(error, result_ip) {
+              if (result_ip) {
+                  console.log("\nWifi is enabled, and IP " + result_ip + " assigned");
+                  wifi_manager.write_wifi_status("WIFI_CONNECTED");
+              } else {
+                  console.log("\nWifi is not enabled, Enabling AP for self-configure");
+                  wifi_manager.enable_ap_mode(config.access_point.ssid, function(error) {
+                      if(error) {
+                          console.log("... AP Enable ERROR: " + error);
+                      } else {
+                          console.log("... AP Enable Success!");
+                          wifi_manager.write_wifi_status("AP_MODE");
+                      }
+                  });
+              }
+              next_step();
+          });
+          break;
+      }
+
+    },
+
+    // Host HTTP server for web backend, the "api.js"
     function start_http_server(next_step) {
-        console.log("\nHTTP server running...");
-        require("./app/api.js")(wifi_manager, next_step);
+      console.log("HTTP server running...");
+      serverProc = child.fork("/ch/current/www/ch-box-admin/app/api.js");
+      require("/ch/current/www/ch-box-admin/app/api.js")(wifi_manager, next_step);
     },
 
 ], function(error) {

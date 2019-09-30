@@ -6,7 +6,8 @@ var _             = require("underscore")._,
     box_info      = {
       software_version:   "unknown",
       system_version:     "unknown",
-      beta_code:          ""
+      beta_code:          "",
+      ap_mode:            "not_set"
     };
 
 // Better template format
@@ -109,6 +110,76 @@ module.exports = function() {
         });
     },
 
+    // Read the mode set in ap_mode file
+    _read_ap_mode = function(callback) {
+      ap_mode = "auto";
+      if (fs.existsSync(config.ap_mode_path, 'utf8')) {
+        fs.readFile(config.ap_mode_path, (err, data) => {
+          if (!err) {
+            ap_mode = data.toString().replace(/\r?\n|\r/g, "");
+          }
+          return callback(null, ap_mode);
+        });
+      }
+    },
+
+    _get_box_info = function(callback) {
+        //call is from api.js, return box_info immediately
+        if (callback == undefined) {return box_info;}
+        _load_box_info(function() {
+            return callback(null, box_info);
+        });
+    },
+
+    // copy /ch/version.txt to .app/views for easier reading of the version file.
+    _load_box_info = function(callback) {
+
+          async.series([
+
+              function get_software_version(next_step) {
+                if (fs.existsSync('/ch/version.txt', 'utf8')) {
+                  fs.readFile('/ch/version.txt', (err, data) => {
+                    if (err) throw err;
+                      box_info.software_version = data.toString().replace(/\r?\n|\r/g, "");
+                      console.log("software_version: " + box_info.software_version);
+                      next_step();
+                  });
+                }
+              },
+
+              function get_system_version(next_step) {
+                if (fs.existsSync('/ch/system-version.txt', 'utf8')) {
+                  fs.readFile('/ch/system-version.txt', (err, data) => {
+                    if (err) throw err;
+                      box_info.system_version = data.toString().replace(/\r?\n|\r/g, "");
+                      console.log("system_version: " + box_info.system_version);
+                      next_step();
+                  });
+                }
+              },
+
+              function get_beta_code(next_step) {
+                if (fs.existsSync('/ch/beta_code.txt', 'utf8')) {
+                  fs.readFile('/ch/beta_code.txt', (err, data) => {
+                    if (err) throw err;
+                      box_info.beta_code = data.toString().replace(/\r?\n|\r/g, "");
+                      console.log("beta_code: " + box_info.beta_code);
+                      next_step();
+                  });
+                }
+              },
+
+              function get_ap_mode(next_step) {
+                _read_ap_mode(function(err, mode) {
+                  box_info.ap_mode = mode;
+                  //console.log("get_ap_mode: " + box_info.ap_mode);
+                  next_step();
+                });
+              },
+
+          ], callback);
+    },
+
     // Wifi related functions
     _is_wifi_enabled_sync = function(info) {
         // If we are not an AP, and we have a valid
@@ -167,7 +238,7 @@ module.exports = function() {
                 return callback(error);
             }
 
-            if (result_addr != "<unknown>") {
+            if (result_addr != "<unknown>" && box_info.ap_mode != "on") {
                 console.log("\nAccess point is enabled with ADDR: " + result_addr);
                 return callback(null);
             } else {
@@ -183,10 +254,20 @@ module.exports = function() {
 
               function apply_hostname_to_ssid(next_step) {
                 exec("hostname", function(error, stdout, stderr) {
-                    console.log(stdout);
-                    if (!error) {
+                    //console.log(stdout);
+                    if (!error && stdout != null) {
                       config.access_point.ssid = stdout;
-                      console.log("... SSID is " + config.access_point.ssid);
+                    }
+                    console.log("... SSID is " + config.access_point.ssid);
+                    next_step();
+                });
+              },
+
+              function disable_wpa_supplicant(next_step) {
+                exec("systemctl stop wpa_supplicant", function(error, stdout, stderr) {
+                    //console.log(stdout);
+                    if (!error) {
+                      console.log("... wpa_supplicant is shutdown");
                     }
                     next_step();
                 });
@@ -200,10 +281,9 @@ module.exports = function() {
                       context, next_step);
               },
 
-              // create_ap is already running, but we need to stop wpa_supplicant
               function create_uap0_interface(next_step) {
                   exec("iw dev wlan0 interface add uap0 type __ap", function(error, stdout, stderr) {
-                      console.log(stdout);
+                      //console.log(stdout);
                       if (!error) console.log("... uap0 interface created!");
                       next_step();
                   });
@@ -211,7 +291,7 @@ module.exports = function() {
 
               function create_nat_routing(next_step) {
                   exec("iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE", function(error, stdout, stderr) {
-                      console.log(stdout);
+                      //console.log(stdout);
                       if (!error) console.log("... NAT routing created!");
                       next_step();
                   });
@@ -219,7 +299,7 @@ module.exports = function() {
 
               function start_uap0_link(next_step) {
                   exec("ip link set uap0 up", function(error, stdout, stderr) {
-                      console.log(stdout);
+                      //console.log(stdout);
                       if (!error) console.log("... uap0 link up");
                       next_step();
                   });
@@ -227,7 +307,7 @@ module.exports = function() {
 
               function set_uap0_ip_address_range(next_step) {
                   exec("ip addr add 192.168.4.1/24 broadcast 192.168.4.255 dev uap0", function(error, stdout, stderr) {
-                      console.log(stdout);
+                      //console.log(stdout);
                       if (!error) console.log("... uap0 IP address range set");
                       next_step();
                   });
@@ -235,7 +315,7 @@ module.exports = function() {
 
               function start_hostapd_service(next_step) {
                   exec("service hostapd start", function(error, stdout, stderr) {
-                      console.log(stdout);
+                      //console.log(stdout);
                       if (!error) console.log("... hostapd started");
                       next_step();
                   });
@@ -243,7 +323,7 @@ module.exports = function() {
 
               function start_dnsmasq_service(next_step) {
                   exec("service dnsmasq start", function(error, stdout, stderr) {
-                      console.log(stdout);
+                      //console.log(stdout);
                       if (!error) console.log("... dnsmasq started");
                       next_step();
                   });
@@ -254,25 +334,55 @@ module.exports = function() {
     },
 
     // Disables AP mode and reverts to wifi connection
-    _enable_wifi_mode = function(connection_info, callback) {
+    _disable_ap_mode = function(callback) {
+        async.series([
+            // Take down AP services
+            function stop_hostapd_service(next_step) {
+                exec("service hostapd stop", function(error, stdout, stderr) {
+                    //console.log(stdout);
+                    if (!error) console.log("... hostapd stopped");
+                    next_step();
+                });
+            },
 
+            function stop_dnsmasq_service(next_step) {
+                exec("service dnsmasq stop", function(error, stdout, stderr) {
+                    //console.log(stdout);
+                    if (!error) console.log("... dnsmasq stopped");
+                    next_step();
+                });
+            },
+
+            function restart_network_service(next_step) {
+                exec("systemctl restart networking", function(error, stdout, stderr) {
+                    //console.log(stdout);
+                    if (!error) console.log("... network reset");
+                    next_step();
+                });
+            },
+
+            function restart_dhcp_service(next_step) {
+                exec("systemctl restart dhcp", function(error, stdout, stderr) {
+                    //console.log(stdout);
+                    if (!error) console.log("... network reset");
+                    next_step();
+                });
+            },
+
+        ], callback);
+    },
+
+    // Save connection_info to wpa_supplicant
+    _store_wifi_creds = function(connection_info, callback) {
         console.log("received connection_info: \"" + connection_info.wifi_ssid + "\" \"" + connection_info.wifi_passcode + "\"");
-        _is_wifi_enabled(function(error, result_ip) {
-            if (error) return callback(error);
-
-            async.series([
-                // Add SSID to wpa_supplicant...
-                function update_interfaces(next_step) {
-                    exec("wpa_passphrase \"" + connection_info.wifi_ssid + "\" \"" + connection_info.wifi_passcode + "\" >> /etc/wpa_supplicant/wpa_supplicant.conf", function(error, stdout, stderr) {
-                        console.log(stdout);
-                        if (!error) console.log("... saved to wpa_supplicant");
-                        next_step();
-                    });
-                },
-
-            ], callback);
-        });
-
+        async.series([
+          function update_interfaces(next_step) {
+              exec("wpa_passphrase \"" + connection_info.wifi_ssid + "\" \"" + connection_info.wifi_passcode + "\" >> /etc/wpa_supplicant/wpa_supplicant.conf", function(error, stdout, stderr) {
+                  if (!error) console.log("... saved to wpa_supplicant");
+                  next_step();
+              });
+          }
+        ]);
     },
 
     // Reboots the box
@@ -281,63 +391,14 @@ module.exports = function() {
           async.series([
               function write_boot_status_and_wait_to_reboot(next_step) {
                   _write_wifi_status("REBOOT");
-                  setTimeout( function () {
-                    exec("sync;sync;sync;sleep 1;shutdown -r now", function(error, stdout, stderr) {
-                    //exec("shutdown -r now", function(error, stdout, stderr) {
-                        console.log(stdout);
-                        if (!error) console.log("... rebooting");
-                    });
-                  }, 1000);
+                  exec("sync;sync;sync;sleep 1;shutdown -r now", function(error, stdout, stderr) {
+                      if (!error) console.log("... rebooting");
+                  });
                   next_step();
               },
 
           ], callback);
-    },
-
-    // copy /ch/version.txt to .app/views for easier reading of the version file.
-    _load_box_info = function(callback) {
-
-          async.series([
-
-              function get_software_version(next_step) {
-                if (fs.existsSync('/ch/version.txt', 'utf8')) {
-                  fs.readFile('/ch/version.txt', (err, data) => {
-                    if (err) throw err;
-                      box_info.software_version = data.toString().replace(/\r?\n|\r/g, "");
-                      console.log("software_version: " + box_info.software_version);
-                      next_step();
-                  });
-                }
-              },
-
-              function get_system_version(next_step) {
-                if (fs.existsSync('/ch/system-version.txt', 'utf8')) {
-                  fs.readFile('/ch/system-version.txt', (err, data) => {
-                    if (err) throw err;
-                      box_info.system_version = data.toString().replace(/\r?\n|\r/g, "");
-                      console.log("system_version: " + box_info.system_version);
-                      next_step();
-                  });
-                }
-              },
-
-              function get_beta_code(next_step) {
-                if (fs.existsSync('/ch/beta_code.txt', 'utf8')) {
-                  fs.readFile('/ch/beta_code.txt', (err, data) => {
-                    if (err) throw err;
-                      box_info.beta_code = data.toString().replace(/\r?\n|\r/g, "");
-                      console.log("beta_code: " + box_info.beta_code);
-                      next_step();
-                  });
-                }
-              },
-
-          ], callback);
-    },
-
-    _get_box_info = function() {
-      return box_info;
-    };
+    }
 
     return {
         get_wifi_info:           _get_wifi_info,
@@ -349,13 +410,15 @@ module.exports = function() {
         is_ap_enabled_sync:      _is_ap_enabled_sync,
 
         enable_ap_mode:          _enable_ap_mode,
-        enable_wifi_mode:        _enable_wifi_mode,
+        disable_ap_mode:        _disable_ap_mode,
+        store_wifi_creds:        _store_wifi_creds,
 
         write_wifi_status:       _write_wifi_status,
 
+        read_ap_mode:            _read_ap_mode,
+
         reboot:                  _reboot,
 
-        load_box_info:           _load_box_info,
-        get_box_info:           _get_box_info
+        get_box_info:            _get_box_info,
     };
 }

@@ -67,9 +67,9 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
 
         $scope.get_box_info = function() {
             PiManager.get_box_info().then(function(response) {
-                $scope.beta_code = response.data.beta_code;
-                $scope.software_version = response.data.software_version;
-                $scope.system_version = response.data.system_version;
+              $scope.beta_code = response.data.beta_code;
+              $scope.software_version = response.data.software_version;
+              $scope.system_version = response.data.system_version;
             });
         }
 
@@ -100,7 +100,6 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
           var updater_info = {
             beta_code: $scope.beta_code.toLowerCase(),
           };
-          console.log("beta_code: " + $scope.beta_code);
           $scope.download_status_message = "Downloading update...";
           $scope.update_running = true;
           PiManager.update_software(updater_info).then(function(response) {
@@ -143,9 +142,7 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             $scope.no_results = true;
           PiManager.list_stored_wifi(true).then(function(response) {
               if (response.data.status == "SUCCESS") {
-                console.log(response.data.scan_results);
                 $scope.scan_results = response.data.scan_results;
-                console.log("num results: " + response.data.scan_results.length);
                 if (response.data.scan_results.length > 0) {
                   $scope.no_results = false;
                 }
@@ -155,20 +152,16 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
         }
 
         $scope.remove_network = function(network_id) {
-          console.log("network_id: " + network_id);
           $scope.scan_results = [];
           $scope.selected_network = null;
           $scope.scan_running = true;
           $scope.no_results = true;
           PiManager.remove_stored_wifi(parseInt(network_id, 10)).then(function(response) {
             if (response.data.status == "SUCCESS") {
-              console.log("Network removed.");
               $scope.show_save_message = true;
               PiManager.list_stored_wifi(false).then(function(response) {
                 if (response.data.status == "SUCCESS") {
-                  console.log(response.data.scan_results);
                   $scope.scan_results = response.data.scan_results;
-                  console.log("num results: " + response.data.scan_results.length);
                   if (response.data.scan_results.length > 0) {
                     $scope.no_results = false;
                   }

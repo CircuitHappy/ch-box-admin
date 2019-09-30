@@ -141,7 +141,7 @@ module.exports = function(wifi_manager, callback) {
 
         // TODO: If wifi did not come up correctly, it should fail
         // currently we ignore ifup failures.
-        wifi_manager.enable_wifi_mode(conn_info, function(error) {
+        wifi_manager.store_wifi_creds(conn_info, function(error) {
             if (error) {
                 console.log("Enable Wifi ERROR: " + error);
                 console.log("Attempt to re-enable AP mode");
