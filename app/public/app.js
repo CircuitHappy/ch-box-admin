@@ -33,6 +33,9 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
         $scope.beta_code                 = "";
         $scope.system_version            = "";
         $scope.software_version          = "";
+        $scope.ssid_name                 = "";
+        $scope.ssid_passphrase           = "";
+        $scope.hidden_ssid               = false;
 
         // Scope filter definitions
         $scope.orderScanResults = function(cell) {
@@ -139,23 +142,25 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
             $scope.scan_results = [];
             $scope.selected_network = null;
             $scope.scan_running = true;
-            $scope.no_results = true;
+            $scope.no_results = false;
           PiManager.list_stored_wifi(true).then(function(response) {
               if (response.data.status == "SUCCESS") {
                 $scope.scan_results = response.data.scan_results;
                 if (response.data.scan_results.length > 0) {
                   $scope.no_results = false;
+                } else {
+                  $scope.no_results = true;
                 }
               }
+              $scope.scan_running = false;
             });
-            $scope.scan_running = false;
         }
 
         $scope.remove_network = function(network_id) {
           $scope.scan_results = [];
           $scope.selected_network = null;
           $scope.scan_running = true;
-          $scope.no_results = true;
+          $scope.no_results = false;
           PiManager.remove_stored_wifi(parseInt(network_id, 10)).then(function(response) {
             if (response.data.status == "SUCCESS") {
               $scope.show_save_message = true;
@@ -164,21 +169,50 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
                   $scope.scan_results = response.data.scan_results;
                   if (response.data.scan_results.length > 0) {
                     $scope.no_results = false;
+                  } else {
+                    $scope.no_results = true;
                   }
                 }
               });
             } else {
               console.log("error removing network: " + response.data.error);
             }
+            $scope.scan_running = false;
           });
-          $scope.scan_running = false;
+
       }
 
       $scope.update_stored_networks = function() {
+        $scope.update_running = true;
         PiManager.update_stored_wifi().then(function(response) {
           if (response.data.status == "SUCCESS") {
+            $scope.update_running = false;
             $scope.update_status_message = "Saved Stored Networks. Rebooting your Missing Link.";
             console.log("About to reboot.");
+            $scope.rebooting = true;
+            $scope.show_reboot_message = true;
+            PiManager.reboot_box();
+          }
+        });
+      }
+
+      $scope.get_ssid_settings = function() {
+          PiManager.get_ssid_settings().then(function(response) {
+            $scope.ssid = response.data.ssid;
+            $scope.hidden_ssid = response.data.hidden_ssid ? true : false;
+            $scope.ssid_passphrase = response.data.passphrase;
+          });
+      }
+
+      $scope.save_ssid_settings = function() {
+        var ssid_settings = {};
+        ssid_settings.ssid = $scope.ssid;
+        ssid_settings.hidden_ssid = $scope.hidden_ssid;
+        ssid_settings.ssid_passphrase = $scope.ssid_passphrase;
+        $scope.update_running = true;
+        PiManager.update_ssid_settings(ssid_settings).then(function(response) {
+          if (response.data.status == "SUCCESS") {
+            $scope.update_running = true;
             $scope.rebooting = true;
             $scope.show_reboot_message = true;
             PiManager.reboot_box();
@@ -224,6 +258,12 @@ app.service("PiManager", ["$http",
             },
             get_box_info: function() {
                 return $http.get("/api/box_info");
+            },
+            update_ssid_settings: function(ssid_settings) {
+                return $http.post("/api/update_ssid", ssid_settings);
+            },
+            get_ssid_settings: function() {
+                return $http.get("/api/get_ssid_settings");
             }
         };
     }]

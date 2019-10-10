@@ -2,7 +2,8 @@ var _             = require("underscore")._,
     async         = require("async"),
     fs            = require("fs"),
     exec          = require("child_process").exec,
-    config        = require("../config.json"),
+    config_path   = '/ch/config.json';
+    config        = null,
     box_info      = {
       software_version:   "unknown",
       system_version:     "unknown",
@@ -96,18 +97,18 @@ module.exports = function() {
 
     // Write WiFi Conf status to files
     _write_wifi_status = function(status) {
-        //clear wifi status file
-        fs.truncate(config.wifi_status_path, 0, function(err) {
-          if(err) {
-            return console.log(err);
-          }
-        });
-        //then write the new status to file
-        fs.writeFile(config.wifi_status_path, status, function(err) {
-          if(err) {
-            return console.log(err);
-          }
-        });
+      //clear wifi status file
+      fs.truncate(config.wifi_status_path, 0, function(err) {
+        if(err) {
+          return console.log(err);
+        }
+      });
+      //then write the new status to file
+      fs.writeFile(config.wifi_status_path, status, function(err) {
+        if(err) {
+          return console.log(err);
+        }
+      });
     },
 
     // Read the mode set in ap_mode file
@@ -120,6 +121,8 @@ module.exports = function() {
           }
           return callback(null, ap_mode);
         });
+      } else {
+        return callback(null, ap_mode);
       }
     },
 
@@ -129,6 +132,104 @@ module.exports = function() {
         _load_box_info(function() {
             return callback(null, box_info);
         });
+    },
+
+    _get_ssid_settings = function(callback) {
+      var ssid_settings = config.access_point;
+      //console.log("get_ssid_settings: " + JSON.stringify(ssid_settings));
+      return callback(null, ssid_settings);
+    },
+
+    _load_config = function(callback) {
+      async.series([
+
+        function load_path(next_step) {
+          if (fs.existsSync(config_path, 'utf8') == false) {
+              exec("cp /ch/current/www/ch-box-admin/config.json " + config_path, function(error, stdout, stderr) {
+                  //console.log(stdout);
+                  console.log("... config.json not found, copying default file.");
+                  next_step();
+              });
+          } else {
+            next_step();
+          }
+        },
+
+        function load_conf(next_step) {
+          fs.readFile(config_path, 'utf8', function (err, data) {
+            if (err) console.log("load config error: " + err);
+            config = JSON.parse(data);
+            next_step();
+          });
+        },
+
+        function check_ssid_default(next_step) {
+          if (config.access_point.ssid == "") {
+            console.log("Reset SSID to defaults.");
+            _reset_ssid_defaults(function(){
+              next_step();
+            });
+          }
+          next_step();
+        },
+
+        function return_config(next_step) {
+          //console.log("server load config: " + JSON.stringify(config));
+          return callback(null, config);
+          next_step();
+        }
+
+      ], callback);
+
+    },
+
+    _update_ssid_config = function(ssid_settings, callback) {
+      config.access_point.ssid = ssid_settings.ssid;
+      config.access_point.hidden_ssid = ssid_settings.hidden_ssid | 0;
+      config.access_point.passphrase = ssid_settings.ssid_passphrase;
+      _update_config_file(function(err){
+        return callback(err);
+      });
+    },
+
+    _reset_ssid_defaults = function(callback) {
+      async.series([
+
+        function apply_hostname_to_ssid(next_step) {
+          exec("hostname", function(error, stdout, stderr) {
+              //console.log(stdout);
+              if (!error && stdout != null) {
+                config.access_point.ssid = stdout.replace(/\r?\n|\r/g, "");
+              }
+              console.log("... SSID is " + config.access_point.ssid);
+              next_step();
+          });
+        },
+
+        function apply_ssid_defaults(next_step) {
+          config.access_point.hidden_ssid = 0;
+          config.access_point.passphrase = "link1234";
+          next_step();
+        },
+
+        function save_settings(next_step) {
+          _update_config_file(function(){
+            next_step();
+          });
+        },
+
+      ], callback);
+    },
+
+    // Save config to disk
+    _update_config_file = function(callback) {
+      fs.writeFile(config_path, JSON.stringify(config), function (err) {
+        if (err) {
+          return console.log(err);
+        } else {
+          return callback();
+        }
+      })
     },
 
     // copy /ch/version.txt to .app/views for easier reading of the version file.
@@ -232,105 +333,94 @@ module.exports = function() {
     // isc-dhcp-server and hostapd are installed using:
     // $sudo npm run-script provision
     _enable_ap_mode = function(bcast_ssid, callback) {
-        _is_ap_enabled(function(error, result_addr) {
-            if (error) {
-                console.log("ERROR: " + error);
-                return callback(error);
-            }
+      _is_ap_enabled(function(error, result_addr) {
+          if (error) {
+              console.log("ERROR: " + error);
+              return callback(error);
+          }
 
-            if (result_addr != "<unknown>" && box_info.ap_mode != "on") {
-                console.log("\nAccess point is enabled with ADDR: " + result_addr);
-                return callback(null);
-            } else {
-                console.log("\nAP is not enabled yet... enabling...");
-            }
+          if (result_addr != "<unknown>" && box_info.ap_mode != "on") {
+              console.log("\nAccess point is enabled with ADDR: " + result_addr);
+              return callback(null);
+          } else {
+              console.log("\nAP is not enabled yet... enabling...");
+          }
 
-            var context = config.access_point;
-            context["enable_ap"] = true;
-            context["wifi_driver_type"] = config.wifi_driver_type;
+          var context = config.access_point;
+          context["enable_ap"] = true;
+          context["wifi_driver_type"] = config.wifi_driver_type;
 
-            // Here we need to actually follow the steps to enable the ap
-            async.series([
+          // Here we need to actually follow the steps to enable the ap
+          async.series([
 
-              function apply_hostname_to_ssid(next_step) {
-                exec("hostname", function(error, stdout, stderr) {
+            function disable_wpa_supplicant(next_step) {
+              exec("systemctl stop wpa_supplicant && killall wpa_supplicant", function(error, stdout, stderr) {
+                  //console.log(stdout);
+                  if (!error) {
+                    console.log("... wpa_supplicant is shutdown");
+                  }
+                  next_step();
+              });
+            },
+
+            // Set up hostapd conf SSID
+            function update_interfaces(next_step) {
+                write_template_to_file(
+                    "/ch/current/www/ch-box-admin/assets/etc/hostapd/hostapd.conf.template",
+                    "/etc/hostapd/hostapd.conf",
+                    context, next_step);
+            },
+
+            function create_uap0_interface(next_step) {
+                exec("iw dev wlan0 interface add uap0 type __ap", function(error, stdout, stderr) {
                     //console.log(stdout);
-                    if (!error && stdout != null) {
-                      config.access_point.ssid = stdout;
-                    }
-                    console.log("... SSID is " + config.access_point.ssid);
+                    if (!error) console.log("... uap0 interface created!");
                     next_step();
                 });
-              },
+            },
 
-              function disable_wpa_supplicant(next_step) {
-                exec("systemctl stop wpa_supplicant", function(error, stdout, stderr) {
+            function create_nat_routing(next_step) {
+                exec("iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE", function(error, stdout, stderr) {
                     //console.log(stdout);
-                    if (!error) {
-                      console.log("... wpa_supplicant is shutdown");
-                    }
+                    if (!error) console.log("... NAT routing created!");
                     next_step();
                 });
-              },
+            },
 
-              // Set up hostapd conf SSID
-              function update_interfaces(next_step) {
-                  write_template_to_file(
-                      "/ch/current/www/ch-box-admin/assets/etc/hostapd/hostapd.conf.template",
-                      "/etc/hostapd/hostapd.conf",
-                      context, next_step);
-              },
+            function start_uap0_link(next_step) {
+                exec("ip link set uap0 up", function(error, stdout, stderr) {
+                    //console.log(stdout);
+                    if (!error) console.log("... uap0 link up");
+                    next_step();
+                });
+            },
 
-              function create_uap0_interface(next_step) {
-                  exec("iw dev wlan0 interface add uap0 type __ap", function(error, stdout, stderr) {
-                      //console.log(stdout);
-                      if (!error) console.log("... uap0 interface created!");
-                      next_step();
-                  });
-              },
+            function set_uap0_ip_address_range(next_step) {
+                exec("ip addr add 192.168.4.1/24 broadcast 192.168.4.255 dev uap0", function(error, stdout, stderr) {
+                    //console.log(stdout);
+                    if (!error) console.log("... uap0 IP address range set");
+                    next_step();
+                });
+            },
 
-              function create_nat_routing(next_step) {
-                  exec("iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE", function(error, stdout, stderr) {
-                      //console.log(stdout);
-                      if (!error) console.log("... NAT routing created!");
-                      next_step();
-                  });
-              },
+            function start_hostapd_service(next_step) {
+                exec("service hostapd start", function(error, stdout, stderr) {
+                    //console.log(stdout);
+                    if (!error) console.log("... hostapd started");
+                    next_step();
+                });
+            },
 
-              function start_uap0_link(next_step) {
-                  exec("ip link set uap0 up", function(error, stdout, stderr) {
-                      //console.log(stdout);
-                      if (!error) console.log("... uap0 link up");
-                      next_step();
-                  });
-              },
+            function start_dnsmasq_service(next_step) {
+                exec("service dnsmasq start", function(error, stdout, stderr) {
+                    //console.log(stdout);
+                    if (!error) console.log("... dnsmasq started");
+                    next_step();
+                });
+            },
 
-              function set_uap0_ip_address_range(next_step) {
-                  exec("ip addr add 192.168.4.1/24 broadcast 192.168.4.255 dev uap0", function(error, stdout, stderr) {
-                      //console.log(stdout);
-                      if (!error) console.log("... uap0 IP address range set");
-                      next_step();
-                  });
-              },
-
-              function start_hostapd_service(next_step) {
-                  exec("service hostapd start", function(error, stdout, stderr) {
-                      //console.log(stdout);
-                      if (!error) console.log("... hostapd started");
-                      next_step();
-                  });
-              },
-
-              function start_dnsmasq_service(next_step) {
-                  exec("service dnsmasq start", function(error, stdout, stderr) {
-                      //console.log(stdout);
-                      if (!error) console.log("... dnsmasq started");
-                      next_step();
-                  });
-              },
-
-            ], callback);
-        });
+          ], callback);
+      });
     },
 
     // Disables AP mode and reverts to wifi connection
@@ -385,6 +475,18 @@ module.exports = function() {
         ]);
     },
 
+    // Save connection_info to wpa_supplicant
+    _start_missinglink = function(callback) {
+        async.series([
+          function update_interfaces(next_step) {
+              exec("systemctl start missing-link", function(error, stdout, stderr) {
+                  if (!error) console.log("... restarted missing-link.service");
+                  next_step();
+              });
+          }
+        ]);
+    },
+
     // Reboots the box
     _reboot = function(callback) {
 
@@ -410,7 +512,7 @@ module.exports = function() {
         is_ap_enabled_sync:      _is_ap_enabled_sync,
 
         enable_ap_mode:          _enable_ap_mode,
-        disable_ap_mode:        _disable_ap_mode,
+        disable_ap_mode:         _disable_ap_mode,
         store_wifi_creds:        _store_wifi_creds,
 
         write_wifi_status:       _write_wifi_status,
@@ -420,5 +522,14 @@ module.exports = function() {
         reboot:                  _reboot,
 
         get_box_info:            _get_box_info,
+
+        load_config:             _load_config,
+
+        get_ssid_settings:       _get_ssid_settings,
+
+        update_ssid_config:      _update_ssid_config,
+
+        start_missinglink:       _start_missinglink,
+
     };
 }

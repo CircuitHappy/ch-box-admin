@@ -6,7 +6,8 @@
 
     "access_point": {
         "wifi_interface":    "wlan0",
-        "ssid":              "MissingLink-xxxx",
+        "ssid":              "",
+        "hidden_ssid":       0,
         "passphrase":        "link1234",
         "domain":            "rpi.config",
         "ip_addr":           "192.168.44.1",

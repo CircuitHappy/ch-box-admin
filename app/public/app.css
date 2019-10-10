@@ -343,6 +343,23 @@ p.beta-code input {
 
     cursor: pointer;
 }
+
+.scan-results-container input {
+  width: 100%;
+  font-size: 1em;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.scan-results-container input[type=checkbox] {
+  width: 1em;
+  height: 1em;
+}
+
 .btn-cancel {
     background: var(--ch-pink-dark);
     top: 90px; left: 18px;

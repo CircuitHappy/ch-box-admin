@@ -1,10 +1,9 @@
 var async               = require("async"),
     wifi_manager        = require("./app/wifi_manager")(),
-    dependency_manager  = require("./app/dependency_manager")(),
     fs                  = require("fs"),
-    config              = require("./config.json"),
     child               = require("child_process"),
     exec                = require("child_process").exec,
+    config              = undefined,
     box_info            = {};
 
 /*****************************************************************************\
@@ -16,6 +15,14 @@ var async               = require("async"),
     4. Start the HTTP server for backend administration.
 \*****************************************************************************/
 async.series([
+
+    // load info stored in text files about installed software, system, beta
+    function load_config(next_step) {
+      wifi_manager.load_config(function(err, conf) {
+        config = conf;
+        next_step();
+      });
+    },
 
     // load info stored in text files about installed software, system, beta
     function load_box_info(next_step) {

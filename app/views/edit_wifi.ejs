@@ -28,16 +28,20 @@
         <div class="menu-bar"><p>&lt;&lt; <a href="/">Main Menu</a></p></div>
         <div class = "scan-results-container">
           <h1><i class = "fa fa-wifi"></i> Edit Stored WiFi Networks</h1>
+            <div style = "text-align:center;" class = "scan-result-edit" ng-show = "scan_running"><i class = "fa fa-refresh" ng-class = "{ 'fa-spin': scan_running }"></i></div>
             <div class = "scan-result-edit"
                  ng-repeat = "network in scan_results track by $index"
                  ng-class = "{ selected: (network.connected) }">
                 <div class = "ssid"><span class="fa fa-play" ng-show="network.connected"></span>  {{ network.ssid }} <div class="edit-controls"><button ng-click="remove_network(network.network_id)"><span class="fa fa-minus-circle"></span> Remove</button></div></div>
             </div>
-            <div ng-show="no_results"><p>Your Missing Link does not have any stored networks.</p></div>
+            <div ng-show="no_results">
+              <p>Your Missing Link does not have any stored networks.</p>
+              <p><em>Note: This feature does not work when in Access Point Mode!</em></p>
+            </div>
             <div class="notes" ng-hide="no_results"><p><span class="fa fa-play"></span> The network you are currently connected to</p></div>
             <div ng-show="show_save_message" class="updater_button">
               <p>Press the Save Changes button below to permanently remove the networks.</p>
-              <p><button ng-click="update_stored_networks()">Save Changes & Reboot</button></p>
+              <p><button ng-click="update_stored_networks()">Save Changes & Reboot <i class = "fa fa-refresh" ng-class = "{ 'fa-spin': update_running }" ng-show = "update_running"></i></button></p>
               <p>Your Missing Link will automatically reboot after saving changes.</p>
             </div>
         </div>

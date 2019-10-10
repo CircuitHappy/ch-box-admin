@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="linear-gradient" x1="107.78" y1="106.22" x2="32.45" y2="30.88" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#006e8c"/>
+      <stop offset="1" stop-color="#00dcf0"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="91.68" y1="122.32" x2="16.34" y2="46.98" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-3" x1="83.63" y1="130.37" x2="8.29" y2="55.03" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-4" x1="99.73" y1="114.27" x2="24.4" y2="38.93" xlink:href="#linear-gradient"/>
+  </defs>
+  <title>ap_settings</title>
+  <g id="Layer_2" data-name="Layer 2">
+    <g>
+      <g>
+        <path d="M116.33,58.41A73.52,73.52,0,0,0,64,36.73a75,75,0,0,0-11.54.9A25,25,0,0,1,19.07,51.94a75.16,75.16,0,0,0-7.4,6.47,5.69,5.69,0,0,0,8,8,62.62,62.62,0,0,1,88.56,0,5.69,5.69,0,1,0,8-8Z" fill="url(#linear-gradient)"/>
+        <path d="M43.87,90.61a5.7,5.7,0,1,0,8.06,8,17.47,17.47,0,0,1,24.15,0,5.69,5.69,0,0,0,8,0,5.7,5.7,0,0,0,0-8C73.35,79.85,54.61,79.86,43.87,90.61Z" fill="url(#linear-gradient-2)"/>
+        <circle cx="64" cy="110.73" r="8.54" fill="url(#linear-gradient-3)"/>
+        <path d="M64,59.5a50.89,50.89,0,0,0-36.23,15,5.69,5.69,0,0,0,8.05,8,39.85,39.85,0,0,1,56.35,0,5.69,5.69,0,0,0,8-8A50.83,50.83,0,0,0,64,59.5Z" fill="url(#linear-gradient-4)"/>
+      </g>
+      <path d="M29,5A24,24,0,1,1,5,29,24,24,0,0,1,29,5" fill="#32141e" stroke="#32141e" stroke-miterlimit="10" stroke-width="4"/>
+    </g>
+    <g>
+      <circle cx="12.58" cy="29" r="6" fill="#fff"/>
+      <circle cx="29" cy="29" r="6" fill="#fff"/>
+      <circle cx="45.42" cy="29" r="6" fill="#fff"/>
+    </g>
+  </g>
+</svg>

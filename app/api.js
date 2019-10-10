@@ -6,12 +6,13 @@ var path                  = require("path"),
     update                = require("./software_updater"),
     express               = require("express"),
     bodyParser            = require('body-parser'),
-    config                = require("../config.json"),
+    config                = require("/ch/config.json"),
     http_test             = config.http_test_only;
 
 // Helper function to log errors and send a generic status "SUCCESS"
 // message to the caller
 function log_error_send_success_with(success_obj, error, response) {
+
     if (error) {
         console.log("ERROR: " + error);
         response.send({ status: "ERROR", error: error });
@@ -61,6 +62,10 @@ module.exports = function(wifi_manager, callback) {
 
     app.get("/update_software.html", function(request, response) {
         response.render("update_software");
+    });
+
+    app.get("/ap_settings.html", function(request, response) {
+        response.render("ap_settings");
     });
 
     // Setup HTTP routes for various APIs we wish to implement
@@ -127,6 +132,24 @@ module.exports = function(wifi_manager, callback) {
     app.get("/api/box_info", function(request, response) {
       console.log("Server got /api/box_info");
       log_error_send_success_with(wifi_manager.get_box_info(), false, response);
+    });
+
+    app.get("/api/get_ssid_settings", function(request, response) {
+      console.log("Server got /api/get_ssid_settings");
+      wifi_manager.get_ssid_settings(function(error, result) {
+        log_error_send_success_with(result, false, response);
+      });
+    });
+
+    app.post("/api/update_ssid", function(request, response) {
+      var ssid_settings = {};
+      ssid_settings.ssid = request.body.ssid;
+      ssid_settings.ssid_passphrase = request.body.ssid_passphrase;
+      ssid_settings.hidden_ssid = request.body.hidden_ssid;
+      console.log("Server got /api/update_ssid");
+      wifi_manager.update_ssid_config(ssid_settings, function(error, result) {
+          log_error_send_success_with(result, error, response);
+      });
     });
 
     app.post("/api/enable_wifi", function(request, response) {
