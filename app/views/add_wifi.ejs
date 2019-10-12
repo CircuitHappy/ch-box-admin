@@ -28,6 +28,7 @@
         <div class="menu-bar"><p>&lt;&lt; <a href="/">Main Menu</a></p></div>
         <div class = "scan-results-container">
           <h1><i class = "fa fa-wifi"></i> Add a WiFi Network</h1>
+          <div style = "text-align:center;" class = "scan-result-edit" ng-show = "scan_running"><i class = "fa fa-refresh" ng-class = "{ 'fa-spin': scan_running }"></i></div>
             <div class = "scan-result"
                  ng-repeat = "cell in scan_results | orderBy:orderScanResults:true"
                  ng-class = "{ selected: (cell.address == selected_cell.address) }"
