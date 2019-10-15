@@ -193,11 +193,12 @@ module.exports = function() {
     },
 
     _reset_ssid_defaults = function(callback) {
+      console.log("about to reset ssid settings.");
       async.series([
 
         function apply_hostname_to_ssid(next_step) {
           exec("hostname", function(error, stdout, stderr) {
-              //console.log(stdout);
+              console.log(stdout);
               if (!error && stdout != null) {
                 config.access_point.ssid = stdout.replace(/\r?\n|\r/g, "");
               }
@@ -213,7 +214,9 @@ module.exports = function() {
         },
 
         function save_settings(next_step) {
+          console.log("saving config.");
           _update_config_file(function(){
+            _reboot();
             next_step();
           });
         },
@@ -528,6 +531,7 @@ module.exports = function() {
         get_ssid_settings:       _get_ssid_settings,
 
         update_ssid_config:      _update_ssid_config,
+        reset_ssid_defaults:     _reset_ssid_defaults,
 
         start_missinglink:       _start_missinglink,
 

@@ -152,6 +152,15 @@ module.exports = function(wifi_manager, callback) {
       });
     });
 
+    app.get("/api/reset_ap_settings", function(request, response) {
+      console.log("Server got /api/reset_ap_settings");
+      wifi_manager.reset_ssid_defaults(function(error) {
+        if (error) {
+          console.log("AP Settings Reset got an error: " + error);
+        }
+      });
+    });
+
     app.post("/api/enable_wifi", function(request, response) {
         var conn_info = {
             wifi_ssid:      request.body.wifi_ssid,

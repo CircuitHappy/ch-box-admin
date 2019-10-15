@@ -204,20 +204,46 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
           });
       }
 
-      $scope.save_ssid_settings = function() {
-        var ssid_settings = {};
-        ssid_settings.ssid = $scope.ssid;
-        ssid_settings.hidden_ssid = $scope.hidden_ssid;
-        ssid_settings.ssid_passphrase = $scope.ssid_passphrase;
-        $scope.update_running = true;
-        PiManager.update_ssid_settings(ssid_settings).then(function(response) {
-          if (response.data.status == "SUCCESS") {
-            $scope.update_running = true;
-            $scope.rebooting = true;
-            $scope.show_reboot_message = true;
-            PiManager.reboot_box();
+      $scope.submit_ap_settings = function() {
+          var alertMessage = "";
+          var ssid_settings = {};
+          ssid_settings.ssid = $scope.ssid;
+          ssid_settings.hidden_ssid = $scope.hidden_ssid;
+          ssid_settings.ssid_passphrase = $scope.ssid_passphrase;
+          $scope.update_running = true;
+          if (ssid_settings.ssid.match(/[;&()|*?[\]{}><&!^"\'\\$]/g) != null) {
+            alertMessage += "Access Point Name should not contain and of these characters:\n" + '; & ( ) | * ? [ ] { } > < & ! ^ " \' \\ $ ' + "\n\n";
           }
-        });
+          if (ssid_settings.ssid.length == 0 && ssid_settings.ssid.length <= 32) {
+            alertMessage += "Access Point Name must be between 1 and 32 characters long.\n\n";
+          }
+          if ((ssid_settings.ssid_passphrase.length < 8) || (ssid_settings.ssid_passphrase.length > 63)) {
+            alertMessage += "Access Point password needs to be between 8 and 63 characters in length.\n\n";
+          }
+          if (alertMessage == "") {
+            PiManager.update_ssid_settings(ssid_settings).then(function(response) {
+              if (response.data.status == "SUCCESS") {
+                $scope.update_running = false;
+                $scope.rebooting = true;
+                $scope.show_reboot_message = true;
+                PiManager.reboot_box();
+              }
+            });
+          } else {
+            alert(alertMessage);
+            $scope.update_running = false;
+          }
+      }
+
+      $scope.reset_ap_settings = function() {
+          PiManager.reset_ssid_defaults().then(function(response) {
+            if (response.data.status == "SUCCESS") {
+              $scope.update_running = false;
+              $scope.rebooting = true;
+              console.log("would be rebooting now.");
+              PiManager.reboot_box();
+            }
+          });
       }
 
         // Get any information about Missing Link box stored server side
@@ -264,6 +290,9 @@ app.service("PiManager", ["$http",
             },
             get_ssid_settings: function() {
                 return $http.get("/api/get_ssid_settings");
+            },
+            reset_ap_settings: function() {
+                return $http.get("/api/reset_ssid_settings");
             }
         };
     }]
