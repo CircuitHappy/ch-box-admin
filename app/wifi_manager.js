@@ -358,15 +358,34 @@ module.exports = function() {
           // Here we need to actually follow the steps to enable the ap
           async.series([
 
-            function disable_wpa_supplicant(next_step) {
-              exec("systemctl stop wpa_supplicant && killall wpa_supplicant", function(error, stdout, stderr) {
+            // Stop missing_link to give the system some breathing room
+            // function stop_missing_link(next_step) {
+            //     exec("systemctl stop missing-link", function(error, stdout, stderr) {
+            //         //console.log(stdout);
+            //         if (!error) console.log("... missing_link stopped");
+            //         next_step();
+            //     });
+            // },
+
+            function disconnect_wpa_supplicant(next_step) {
+              exec("wpa_cli terminate", function(error, stdout, stderr) {
                   //console.log(stdout);
                   if (!error) {
-                    console.log("... wpa_supplicant is shutdown");
+                    console.log("... wpa_supplicant disconnected");
                   }
                   next_step();
               });
             },
+
+            // function disable_wpa_supplicant(next_step) {
+            //   exec("systemctl stop wpa_supplicant && killall wpa_supplicant", function(error, stdout, stderr) {
+            //       //console.log(stdout);
+            //       if (!error) {
+            //         console.log("... wpa_supplicant is shutdown");
+            //       }
+            //       next_step();
+            //   });
+            // },
 
             // Set up hostapd conf SSID
             function update_interfaces(next_step) {
@@ -424,6 +443,45 @@ module.exports = function() {
                 });
             },
 
+            // function restart_network_services(next_step) {
+            //   exec("systemctl restart networking", function(error, stdout, stderr) {
+            //       //console.log(stdout);
+            //       if (!error) {
+            //         console.log("... restarted networking");
+            //       }
+            //       next_step();
+            //   });
+            // },
+
+            function restart_avahi(next_step) {
+              exec("systemctl restart avahi-daemon.socket avahi-daemon.service", function(error, stdout, stderr) {
+                  //console.log(stdout);
+                  if (!error) {
+                    console.log("... restarted networking");
+                  }
+                  next_step();
+              });
+            },
+
+            // function disconnect_wpa_supplicant(next_step) {
+            //   exec("wpa_cli terminate", function(error, stdout, stderr) {
+            //       //console.log(stdout);
+            //       if (!error) {
+            //         console.log("... wpa_supplicant terminated");
+            //       }
+            //       next_step();
+            //   });
+            // },
+
+            // start missing_link
+            // function start_missing_link(next_step) {
+            //     exec("systemctl start missing-link", function(error, stdout, stderr) {
+            //         //console.log(stdout);
+            //         if (!error) console.log("... missing_link started");
+            //         next_step();
+            //     });
+            // },
+
           ], callback);
       });
     },
@@ -431,6 +489,15 @@ module.exports = function() {
     // Disables AP mode and reverts to wifi connection
     _disable_ap_mode = function(callback) {
         async.series([
+            // Stop missing_link to give the system some breathing room
+            function stop_missing_link(next_step) {
+                exec("systemctl stop missing-link", function(error, stdout, stderr) {
+                    //console.log(stdout);
+                    if (!error) console.log("... missing_link stopped");
+                    next_step();
+                });
+            },
+
             // Take down AP services
             function stop_hostapd_service(next_step) {
                 exec("service hostapd stop", function(error, stdout, stderr) {
@@ -460,6 +527,15 @@ module.exports = function() {
                 exec("systemctl restart dhcp", function(error, stdout, stderr) {
                     //console.log(stdout);
                     if (!error) console.log("... network reset");
+                    next_step();
+                });
+            },
+
+            // start missing_link
+            function start_missing_link(next_step) {
+                exec("systemctl start missing-link", function(error, stdout, stderr) {
+                    //console.log(stdout);
+                    if (!error) console.log("... missing_link started");
                     next_step();
                 });
             },
