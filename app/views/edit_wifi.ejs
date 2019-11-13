@@ -35,8 +35,8 @@
                 <div class = "ssid"><span class="fa fa-play" ng-show="network.connected"></span>  {{ network.ssid }} <div class="edit-controls"><button ng-click="remove_network(network.network_id)"><span class="fa fa-minus-circle"></span> Remove</button></div></div>
             </div>
             <div ng-show="no_results">
-              <p>Your Missing Link does not have any stored networks.</p>
-              <p><em>Note: This feature does not work when in Access Point Mode!</em></p>
+              <p ng-show="wifi_status == 'AP_MODE'"><em>Your Missing Link is in Access Point Mode. You cannot edit the list of stored WiFi networks while in Access Point Mode.</em></p>
+              <p ng-show="wifi_status != 'AP_MODE'">Your Missing Link does not have any stored networks.</p>
             </div>
             <div class="notes" ng-hide="no_results"><p><span class="fa fa-play"></span> The network you are currently connected to</p></div>
             <div ng-show="show_save_message" class="updater_button">

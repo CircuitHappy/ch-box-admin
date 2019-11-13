@@ -36,6 +36,8 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
         $scope.ssid_name                 = "";
         $scope.ssid_passphrase           = "";
         $scope.hidden_ssid               = false;
+        $scope.ap_mode                   = "not_set";
+        $scope.wifi_status               = "not_set";
 
         // Scope filter definitions
         $scope.orderScanResults = function(cell) {
@@ -73,6 +75,8 @@ app.controller("AppController", ["PiManager", "$scope", "$location", "$timeout",
               $scope.beta_code = response.data.beta_code;
               $scope.software_version = response.data.software_version;
               $scope.system_version = response.data.system_version;
+              $scope.ap_mode = response.data.ap_mode;
+              $scope.wifi_status = response.data.wifi_status;
             });
         }
 

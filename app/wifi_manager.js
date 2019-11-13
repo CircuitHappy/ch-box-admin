@@ -8,7 +8,8 @@ var _             = require("underscore")._,
       software_version:   "unknown",
       system_version:     "unknown",
       beta_code:          "",
-      ap_mode:            "not_set"
+      ap_mode:            "not_set",
+      wifi_status:        "FALSE"
     };
 
 // Better template format
@@ -97,6 +98,7 @@ module.exports = function() {
 
     // Write WiFi Conf status to files
     _write_wifi_status = function(status) {
+      box_info.wifi_status = status;
       //clear wifi status file
       fs.truncate(config.wifi_status_path, 0, function(err) {
         if(err) {
