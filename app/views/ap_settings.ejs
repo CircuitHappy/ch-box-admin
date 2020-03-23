@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="RpiWifiConfig">
+
+<head>
+    <title>Missing Link: Edit Access Point Settings</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=1">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <link rel="stylesheet" href="/external/font-awesome/css/font-awesome.min.css" >
+    <link rel="stylesheet" href="/app.css">
+</head>
+
+
+<body ng-controller = "AppController"
+      ng-keyup      = "$event.keyCode == 27 ? change_selection(null) : ''">
+
+    <div class = "page-header" data-ng-init = "get_ssid_settings()">
+      THE MISSING LINK Control Panel
+    </div>
+
+    <div class = "page-content">
+        <div class="menu-bar"><p>&lt;&lt; <a href="/">Main Menu</a></p></div>
+        <div class = "scan-results-container">
+          <h1>Edit Access Point Settings</h1>
+            <p>These settings change the WiFi access point created by this Missing Link when it goes in to Access Point Mode.</p>
+            <div class="updater_button">
+                <form>
+                  <label for="ssid">Name (SSID)</label>
+                  <input type="text" id="ssid"  ng-model="ssid" value="{{ssid}}">
+                  <label for="ssid_passphrase">Password</label>
+                  <input type="text" id="ssid_passphrase"  ng-model="ssid_passphrase" value="{{ssid_passphrase}}">
+                  <label for="hidden_ssid">Hidden SSID</label>
+                  <input type="checkbox" id="hidden_ssid"  ng-model="hidden_ssid" value="{{hidden_ssid}}"/></br>
+                  <p>Press the Save Changes button below to update your Missing Link Access Point Settings.</p>
+                  <p><button ng-click="submit_ap_settings()">Save Changes & Reboot <i class = "fa fa-refresh" ng-class = "{ 'fa-spin': update_running }" ng-show = "update_running"></i></button></p>
+                  <p>Your Missing Link will automatically reboot after saving changes.</p>
+              </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="reboot-message-container" ng-show="show_reboot_message">
+      <div class="reboot-message">
+        <p><img class="rebooting" src="rebooting_anim.gif"/></p>
+        <p>Settings are being saved and the system is rebooting.</p>
+        <p>Your Missing Link should be back up and running on your network in a minute.</p>
+        <p class="reboot-footer"><a href="/"><img class="reboot-footer" src="small_white_logo.svg"/></a></p>
+      </div>
+    </div>
+
+    <div class = "page-footer">
+      <p>Questions? email support@circuithappy.com</p>
+      <p><img src="footer_logo.svg"/></p>
+      <ul>System Information:
+        <li>Software: {{software_version}}</li>
+        <li>System: {{system_version}}</li>
+        <li><a href="diagnostics.html">Diagnostics</a></li>
+      </ul>
+    </div>
+
+    <!-- Scripts load last -->
+    <script src="/external/angularjs/angular.min.js"></script>
+    <script src="/app.js"></script>
+
+</body>
+
+</html>
